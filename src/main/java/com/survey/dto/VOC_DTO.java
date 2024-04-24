@@ -1,10 +1,6 @@
 package com.survey.dto;
 
 import com.survey.entity.Survey;
-import com.survey.entity.Users;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
