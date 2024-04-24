@@ -1,7 +1,16 @@
 package com.survey.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SurveyDTO {
     private String SurveyId; // 설문조사 식별자
 
@@ -16,6 +25,7 @@ public class SurveyDTO {
     private Integer pointAtLeast; // 최소 지급 포인트
 
     private LocalDateTime regDate; // 설문 등록일
+    private LocalDateTime startDate; // 설문 시작일
     private LocalDateTime endDate; // 설문 마감일
 
     private Integer SurveyParticipate; // 설문조사 참여 인원

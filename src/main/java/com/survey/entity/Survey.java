@@ -37,7 +37,8 @@ public class Survey {
     @Column(nullable = false)
     private Integer pointAtLeast; // 최소 지급 포인트
 
-    private LocalDateTime regDate = LocalDateTime.now(); // 설문 등록일
+    private LocalDateTime regDate; // 설문 등록일
+    private LocalDateTime startDate; // 설문 시작일
     private LocalDateTime endDate; // 설문 마감일
 
     private Integer surveyParticipate; // 설문조사 참여 인원
