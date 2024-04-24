@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AdminRepository extends JpaRepository<Admin, String> {
     public Admin findByEmployeeNo(String employeeNo);
     public Admin findByName(String name);
+
+    public Admin findByAdminId(String adminId);
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class OptionsDTO {
     private String optionsId; // 선택지 식별자
 
-    private Question questionId; // 질문 식별자
+    private String questionId; // 질문 식별자
 
     private Integer optionsNumber; // 선택지 번호
 

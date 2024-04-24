@@ -41,6 +41,7 @@ public class SurveyService {
         survey.setStartDate(surveyDTO.getStartDate());
         survey.setEndDate(surveyDTO.getEndDate());
         survey.setSurveyParticipate(surveyDTO.getSurveyParticipate());
+
         return survey;
     }
 
@@ -82,7 +83,7 @@ public class SurveyService {
     // Get ListByMember
     public List<SurveyDTO> findByMemberId(String MemberId){
         Member member = memberRepository.findByMemberId(MemberId);
-        List<Survey> surveyList = surveyRepository.findBySurveyMember(MemberId);
+        List<Survey> surveyList = surveyRepository.findBySurveyMember(memberRepository.findByMemberId(MemberId));
         List<SurveyDTO> surveyDTOs = new ArrayList<>();
         for (Survey survey : surveyList) {
             surveyDTOs.add(convertSurvey(survey));
