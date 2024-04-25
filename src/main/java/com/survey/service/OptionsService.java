@@ -1,11 +1,12 @@
 package com.survey.service;
 
+import com.survey.dto.NextQuestionDTO;
 import com.survey.dto.OptionsDTO;
+import com.survey.dto.QuestionDTO;
 import com.survey.entity.Options;
 import com.survey.entity.Question;
 import com.survey.repository.OptionsRepository;
 import com.survey.repository.QuestionRepository;
-import com.survey.repository.SurveyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class OptionsService {
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
-    private SurveyRepository surveyRepository;
+    private QuestionService questionService;
 
     // Convert DTO to Entity
     public Options convertDTO(OptionsDTO optionsDTO) {
@@ -56,17 +57,37 @@ public class OptionsService {
         log.info("Options Saved: {}", savedOptions.getOptionsId());
     }
 
-    // Read
-    // Get ListByQuestionIdOrderByOptionsNumberDesc
-    public List<OptionsDTO> findByQuestionId(String questionId) {
-        List<OptionsDTO> optionsDTOList = new ArrayList<>();
-        Question question = questionRepository.findByQuestionId(questionId);
-        List<Options> optionsList = optionsRepository.findByQuestionIdOrderByOptionsNumberAsc(question);
-        for(Options options : optionsList){
-            OptionsDTO optionsDTO = convertEntity(options);
-            optionsDTOList.add(optionsDTO);
+    // Save With NextQuestionDTO
+    @Transactional
+    public void saveWithNextQuestionDTO(NextQuestionDTO nextQuestionDTO) {
+        // 질문 저장
+        QuestionDTO questionDTO = nextQuestionDTO.getQuestion();
+        questionService.save(questionDTO);
+        log.info("Question Saved: {}", questionDTO.getQuestionId());
+
+        // 선택지 저장
+        List<OptionsDTO> optionsDTOList = nextQuestionDTO.getOptions();
+        for(OptionsDTO optionsDTO : optionsDTOList){
+            optionsRepository.save(convertDTO(optionsDTO));
+            log.info("Options Saved: {}", optionsDTO.getOptionsId());
         }
-        return optionsDTOList;
+        log.info("Options All Saved");
+    }
+
+    // Read
+    // Get NextQuestion
+    public NextQuestionDTO getNextQuestion(String questionId){
+        NextQuestionDTO nextQuestionDTO = new NextQuestionDTO();
+        Question question = questionRepository.findByQuestionId(questionId);
+        QuestionDTO questionDTO = questionService.convertQuestion(question);
+        nextQuestionDTO.setQuestion(questionDTO);
+        List<Options> optionsList = optionsRepository.findByQuestionIdOrderByOptionsNumberAsc(questionRepository.findByQuestionId(questionId));
+        List<OptionsDTO> optionsDTOList = new ArrayList<>();
+        for(Options options : optionsList){
+            optionsDTOList.add(convertEntity(options));
+        }
+        nextQuestionDTO.setOptions(optionsDTOList);
+        return nextQuestionDTO;
     }
 
     // Get OneByOptionsId

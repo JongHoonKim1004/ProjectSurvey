@@ -1,7 +1,6 @@
 package com.survey.service;
 
 
-import com.survey.dto.MemberPointDTO;
 import com.survey.dto.MemberPointLogDTO;
 import com.survey.entity.MemberPointLog;
 import com.survey.repository.MemberPointLogRepository;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,11 @@ public class MemberPointLogService {
         memberPointLog.setMemberId(memberRepository.findByMemberId(memberPointLogDTO.getMemberId()));
         memberPointLog.setPointChange(memberPointLogDTO.getPointChange());
         memberPointLog.setChangeType(memberPointLogDTO.getChangeType());
-        memberPointLog.setChangeDate(memberPointLogDTO.getChangeDate());
+        if(memberPointLogDTO.getChangeDate() != null){
+            memberPointLog.setChangeDate(memberPointLogDTO.getChangeDate());
+        } else {
+            memberPointLog.setChangeDate(LocalDateTime.now());
+        }
 
         return memberPointLog;
     }
@@ -58,7 +62,7 @@ public class MemberPointLogService {
     // Read
     // For Member
     public List<MemberPointLogDTO> findByMemberId(String memberId) {
-        List<MemberPointLog> memberPointLogList = memberPointLogRepository.findByMemberId(memberRepository.findByMemberId(memberId));
+        List<MemberPointLog> memberPointLogList = memberPointLogRepository.findByMemberIdOrderByChangeDateDesc(memberRepository.findByMemberId(memberId));
         List<MemberPointLogDTO> memberPointLogDTOList = new ArrayList<>();
         for (MemberPointLog memberPointLog : memberPointLogList){
             MemberPointLogDTO memberPointDTO = convertEntity(memberPointLog);
@@ -70,7 +74,7 @@ public class MemberPointLogService {
 
     // For Admin
     public List<MemberPointLogDTO> findAll(){
-        List<MemberPointLog> memberPointLogList = memberPointLogRepository.findAll();
+        List<MemberPointLog> memberPointLogList = memberPointLogRepository.findAllByOrderByChangeDateDesc();
         List<MemberPointLogDTO> memberPointLogDTOList = new ArrayList<>();
         for(MemberPointLog memberPointLog : memberPointLogList){
             MemberPointLogDTO memberPointLogDTO = convertEntity(memberPointLog);
@@ -78,6 +82,13 @@ public class MemberPointLogService {
         }
 
         return memberPointLogDTOList;
+    }
+
+    // Get One
+    public MemberPointLogDTO getOne(String logId){
+        MemberPointLog memberPointLog = memberPointLogRepository.findByLogId(logId);
+        MemberPointLogDTO memberPointLogDTO = convertEntity(memberPointLog);
+        return memberPointLogDTO;
     }
 
     // Update

@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 public class AdminService {
@@ -49,6 +52,16 @@ public class AdminService {
     }
 
     // Read
+    // Get List
+    public List<AdminDTO> getAllAdmins() {
+        List<Admin> admins = adminRepository.findAll();
+        List<AdminDTO> adminDTOs = new ArrayList<>();
+        for(Admin admin : admins){
+            adminDTOs.add(convertEntity(admin));
+        }
+        return adminDTOs;
+    }
+
     // Get Myself
     public AdminDTO getMyself(String adminId){
         Admin admin = adminRepository.findByAdminId(adminId);

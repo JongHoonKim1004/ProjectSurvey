@@ -10,4 +10,6 @@ public interface UsersPointLogRepository extends JpaRepository<UsersPointLog, St
     public List<UsersPointLog> findByUsersIdOrderByLogIdDesc(Users UsersId);
 
     public UsersPointLog findByLogId(Long logId);
+
+    public List<UsersPointLog> findAllByOrderByLogIdDesc();
 }

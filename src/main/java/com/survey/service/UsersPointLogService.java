@@ -71,7 +71,7 @@ public class UsersPointLogService {
 
     // For Admin
     public List<UsersPointLogDTO> findAll(){
-        List<UsersPointLog> usersPointLog = usersPointLogRepository.findAll();
+        List<UsersPointLog> usersPointLog = usersPointLogRepository.findAllByOrderByLogIdDesc();
         List<UsersPointLogDTO> usersPointLogDTOList = new ArrayList<>();
         for (UsersPointLog usersPointLog1 : usersPointLog) {
             UsersPointLogDTO usersPointLogDTO = convertUser(usersPointLog1);

@@ -1,6 +1,9 @@
 package com.survey.service;
 
+import com.survey.dto.ReplyDTO;
 import com.survey.dto.VOC_DTO;
+import com.survey.dto.VocReplyDTO;
+import com.survey.entity.Reply;
 import com.survey.entity.VOC;
 import com.survey.repository.ReplyRepository;
 import com.survey.repository.UsersRepository;
@@ -23,6 +26,8 @@ public class VocService {
     private ReplyRepository replyRepository;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private ReplyService replyService;
 
     // Convert DTO to Entity
     public VOC convertDTO(VOC_DTO dto){
@@ -69,6 +74,13 @@ public class VocService {
     }
 
     // Read
+    // Get One
+    public VOC_DTO findByVocId(String vocId){
+        VOC voc = vocRepository.findByVocId(vocId);
+        VOC_DTO dto = convertEntity(voc);
+        return dto;
+    }
+
     // For Customer
     public List<VOC_DTO> findByWriter(String writer){
         List<VOC_DTO> vocDTOList = new ArrayList<>();
@@ -81,6 +93,8 @@ public class VocService {
         return vocDTOList;
     }
 
+
+
     // For Admin
     public List<VOC_DTO> findAll(){
         List<VOC_DTO> vocDTOList = new ArrayList<>();
@@ -90,6 +104,24 @@ public class VocService {
             vocDTOList.add(dto);
         }
         return vocDTOList;
+    }
+
+    // Get VOC and Reply List
+    public VocReplyDTO getVocAndReplyList(String vocId){
+        VocReplyDTO dto = new VocReplyDTO();
+        VOC voc = vocRepository.findByVocId(vocId);
+        VOC_DTO vocDTO = convertEntity(voc);
+        dto.setVoc(vocDTO);
+
+        List<Reply> replyList = replyRepository.findByVocId(voc);
+        List<ReplyDTO> replyDTOList = new ArrayList<>();
+        for (Reply reply : replyList){
+            ReplyDTO replyDTO = replyService.convertEntity(reply);
+            replyDTOList.add(replyDTO);
+        }
+        dto.setReply(replyDTOList);
+
+        return dto;
     }
 
     // Update

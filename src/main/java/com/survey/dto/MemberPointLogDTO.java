@@ -16,8 +16,8 @@ public class MemberPointLogDTO {
 
     private String memberId; // 사업자 식별자
 
-    private Integer PointChange; // 포인트 변동량
+    private Integer pointChange; // 포인트 변동량
 
-    private String ChangeType; // 변동 사유
-    private LocalDateTime ChangeDate; // 변동 시간
+    private String changeType; // 변동 사유
+    private LocalDateTime changeDate; // 변동 시간
 }

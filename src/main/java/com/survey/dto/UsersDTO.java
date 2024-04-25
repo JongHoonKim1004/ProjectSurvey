@@ -15,7 +15,7 @@ public class UsersDTO {
     private String name; // 이용자 아이디(이메일)
 
     private String nickname; // 이용자 이름
-
+    private String password; // 비밀번호
     private String phone; // 전화번호
     private String addr; // 주소
     private String zipNo; // 우편번호
