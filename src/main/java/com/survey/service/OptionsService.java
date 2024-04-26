@@ -98,6 +98,16 @@ public class OptionsService {
         return optionsDTO;
     }
 
+    // Get List By QuestionId
+    public List<OptionsDTO> findByQuestionId(String questionId) {
+        List<Options> optionsList = optionsRepository.findByQuestionIdOrderByOptionsNumberAsc(questionRepository.findByQuestionId(questionId));
+        List<OptionsDTO> optionsDTOList = new ArrayList<>();
+        for(Options options : optionsList){
+            optionsDTOList.add(convertEntity(options));
+        }
+
+        return optionsDTOList;
+    }
 
     // Update
     @Transactional

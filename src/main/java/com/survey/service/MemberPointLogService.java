@@ -53,12 +53,39 @@ public class MemberPointLogService {
     }
 
     // Create
+        // Normal
     @Transactional
     public void save(MemberPointLogDTO memberPointLogDTO) {
         MemberPointLog memberPointLog = convertDTO(memberPointLogDTO);
         MemberPointLog saved = memberPointLogRepository.save(memberPointLog);
         log.info("SAVED COMPLETE, ID : {}", saved.getLogId());
     }
+        // Create Plus Log
+    @Transactional
+    public MemberPointLogDTO savePlusLog(String memberId, Integer point, String changeType) {
+        MemberPointLogDTO memberPointLogDTO = new MemberPointLogDTO();
+        memberPointLogDTO.setMemberId(memberId);
+        memberPointLogDTO.setPointChange(point);
+        memberPointLogDTO.setChangeType(changeType);
+
+        memberPointLogRepository.save(convertDTO(memberPointLogDTO));
+
+        return memberPointLogDTO;
+    }
+
+        // Create Minus Log
+    @Transactional
+    public MemberPointLogDTO saveMinusLog(String memberId, Integer point, String changeType) {
+        MemberPointLogDTO memberPointLogDTO = new MemberPointLogDTO();
+        memberPointLogDTO.setMemberId(memberId);
+        memberPointLogDTO.setPointChange(point * -1);
+        memberPointLogDTO.setChangeType(changeType);
+
+        memberPointLogRepository.save(convertDTO(memberPointLogDTO));
+
+        return memberPointLogDTO;
+    }
+
     // Read
     // For Member
     public List<MemberPointLogDTO> findByMemberId(String memberId) {

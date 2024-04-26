@@ -28,6 +28,7 @@ public class MemberController {
     @Autowired
     private SurveyService surveyService;
 
+
     // 개인 정보 관련 메서드
         // Create (계정을 생성 할때 포인트 테이블도 같이 생성)
     @PostMapping("/create")

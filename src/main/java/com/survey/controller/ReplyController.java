@@ -1,13 +1,17 @@
 package com.survey.controller;
 
 import com.survey.dto.ReplyDTO;
+import com.survey.dto.UsersDTO;
+import com.survey.dto.VOC_DTO;
 import com.survey.entity.Reply;
+import com.survey.service.EmailService;
 import com.survey.service.ReplyService;
+import com.survey.service.UsersService;
 import com.survey.service.VocService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +24,33 @@ public class ReplyController {
     private ReplyService replyService;
     @Autowired
     private VocService vocService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UsersService usersService;
 
     // Create
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody ReplyDTO replyDTO) {
         replyService.save(replyDTO);
         log.info("Reply created: {}", replyDTO.toString());
+
+        // 답글이 작성되면 이메일 전송
+            // 1. 작성자 확인
+        VOC_DTO vocDto = vocService.findByVocId(replyDTO.getVocId());
+        String userId = vocDto.getWriter();
+        UsersDTO usersDTO = usersService.getMyself(userId);
+        log.info("이용자 {} 님에게 답글 작성 이메일을 전송합니다", userId);
+            // 2. 이메일 전송
+        Integer code = emailService.createRandom();
+        String content = emailService.createEmailWithCode("reply", code);
+        try{
+            emailService.sendEmail(usersDTO.getName(), content, "reply");
+            log.info("Email Sent to : {}", usersDTO.getName());
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
         return ResponseEntity.ok("Reply created");
     }
 

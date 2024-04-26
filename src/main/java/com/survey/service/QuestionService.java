@@ -88,6 +88,12 @@ public class QuestionService {
         return questionDTO;
     }
 
+    // Get One By QuestionId And Question Number
+    public QuestionDTO findByQuestionIdAndQuestionNumber(String questionId, Integer nextQuestionNumber) {
+        QuestionDTO questionDTO = questionRepository.findByQuestionIdAndQuestionNumber(questionId, nextQuestionNumber);
+        return questionDTO;
+    }
+
     // Modify
     @Transactional
     public void update(QuestionDTO questionDTO) {
@@ -104,6 +110,7 @@ public class QuestionService {
         questionRepository.delete(question);
         log.info("Question Deleted: {}", question.getQuestionId());
     }
+
 
 
 }

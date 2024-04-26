@@ -63,10 +63,11 @@ public class SurveyService {
 
     // Create
     @Transactional
-    public void save(SurveyDTO surveyDTO){
+    public SurveyDTO save(SurveyDTO surveyDTO){
         Survey survey = convertDTO(surveyDTO);
         Survey savedSurvey = surveyRepository.save(survey);
         log.info("SAVED SURVEY: {}", savedSurvey.getSurveyId());
+        return convertSurvey(savedSurvey);
     }
 
     // Read

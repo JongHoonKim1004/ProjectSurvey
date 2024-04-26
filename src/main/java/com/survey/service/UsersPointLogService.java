@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,7 +33,11 @@ public class UsersPointLogService {
         usersPointLog.setUsersId(usersRepository.findByUsersId(usersPointLogDTO.getUsersId()));
         usersPointLog.setPointChange(usersPointLogDTO.getPointChange());
         usersPointLog.setChangeType(usersPointLogDTO.getChangeType());
-        usersPointLog.setChangeDate(usersPointLogDTO.getChangeDate());
+        if(usersPointLogDTO.getChangeDate() != null){
+            usersPointLog.setChangeDate(usersPointLogDTO.getChangeDate());
+        } else {
+            usersPointLog.setChangeDate(LocalDateTime.now());
+        }
 
         return usersPointLog;
     }
@@ -49,11 +55,38 @@ public class UsersPointLogService {
     }
 
     // Create
+        // Normal
     @Transactional
     public void save(UsersPointLogDTO usersPointLogDTO) {
         UsersPointLog usersPointLog = convertDTO(usersPointLogDTO);
         usersPointLogRepository.save(usersPointLog);
         log.info("User {}s point log saved", usersPointLogDTO.getUsersId());
+    }
+
+        // Create Plus log
+    @Transactional
+    public UsersPointLogDTO savePlusLog(String userId, Integer point, String changeType) {
+        UsersPointLogDTO usersPointLogDTO = new UsersPointLogDTO();
+        usersPointLogDTO.setUsersId(userId);
+        usersPointLogDTO.setPointChange(point);
+        usersPointLogDTO.setChangeType(changeType);
+
+        usersPointLogRepository.save(convertDTO(usersPointLogDTO));
+
+        return usersPointLogDTO;
+    }
+
+        // Create Minus log
+    @Transactional
+    public UsersPointLogDTO saveMinusLog(String userId, Integer point, String changeType) {
+        UsersPointLogDTO usersPointLogDTO = new UsersPointLogDTO();
+        usersPointLogDTO.setUsersId(userId);
+        usersPointLogDTO.setPointChange(point * -1);
+        usersPointLogDTO.setChangeType(changeType);
+
+        usersPointLogRepository.save(convertDTO(usersPointLogDTO));
+
+        return usersPointLogDTO;
     }
 
     // Read
@@ -96,5 +129,6 @@ public class UsersPointLogService {
         usersPointLogRepository.delete(usersPointLog);
         log.info("User {}s point log deleted", usersPointLog.getUsersId());
     }
+
 
 }
