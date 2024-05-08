@@ -26,7 +26,7 @@ public class Admin {
 
     private String password; // 비밀번호
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickname; // 이름
 
     private String phone; // 전화번호

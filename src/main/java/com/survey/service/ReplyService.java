@@ -48,10 +48,12 @@ public class ReplyService {
 
     // Create
     @Transactional
-    public void save(ReplyDTO replyDTO) {
+    public ReplyDTO save(ReplyDTO replyDTO) {
         Reply reply = convertDTO(replyDTO);
         Reply savedReply = replyRepository.save(reply);
         log.info("REPLY SAVED: {}", savedReply.getReply());
+
+        return convertEntity(savedReply);
     }
 
     // Read

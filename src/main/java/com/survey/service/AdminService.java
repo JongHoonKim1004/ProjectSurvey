@@ -45,10 +45,12 @@ public class AdminService {
 
     // Create
     @Transactional
-    public void save(AdminDTO adminDTO) {
+    public AdminDTO save(AdminDTO adminDTO) {
         Admin admin = convertDTO(adminDTO);
         Admin savedAdmin = adminRepository.save(admin);
         log.info("Admin saved: {}", savedAdmin.getAdminId());
+
+        return convertEntity(savedAdmin);
     }
 
     // Read

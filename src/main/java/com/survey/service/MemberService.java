@@ -27,6 +27,7 @@ public class MemberService {
         member.setNickname(memberDTO.getNickname());
         member.setPassword(memberDTO.getPassword());
         member.setAddr(memberDTO.getAddr());
+        member.setAddrDetail(memberDTO.getAddrDetail());
         member.setZipNo(memberDTO.getZipNo());
         member.setPhone(memberDTO.getPhone());
         member.setEstDate(memberDTO.getEstDate());
@@ -43,6 +44,7 @@ public class MemberService {
         memberDTO.setNickname(member.getNickname());
         memberDTO.setPassword(member.getPassword());
         memberDTO.setAddr(member.getAddr());
+        memberDTO.setAddrDetail(member.getAddrDetail());
         memberDTO.setZipNo(member.getZipNo());
         memberDTO.setPhone(member.getPhone());
         memberDTO.setEstDate(member.getEstDate());
@@ -53,10 +55,11 @@ public class MemberService {
 
     // Create
     @Transactional
-    public void save(MemberDTO memberDTO) {
+    public MemberDTO save(MemberDTO memberDTO) {
         Member member = convertDTO(memberDTO);
         Member saved = memberRepository.save(member);
         log.info("SAVE COMPLETE, MEMBER ID : {}", saved.getMemberId());
+        return convertMember(saved);
     }
 
     // Read

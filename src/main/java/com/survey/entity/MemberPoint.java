@@ -15,6 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class MemberPoint {
     @Id
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
     private String pointId; // 테이블 식별자
 
     @ManyToOne

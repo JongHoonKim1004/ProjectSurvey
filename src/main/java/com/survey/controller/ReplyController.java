@@ -32,12 +32,12 @@ public class ReplyController {
     // Create
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody ReplyDTO replyDTO) {
-        replyService.save(replyDTO);
-        log.info("Reply created: {}", replyDTO.toString());
+        ReplyDTO replyDTO1 =  replyService.save(replyDTO);
+        log.info("Reply created: {}", replyDTO1.toString());
 
         // 답글이 작성되면 이메일 전송
             // 1. 작성자 확인
-        VOC_DTO vocDto = vocService.findByVocId(replyDTO.getVocId());
+        VOC_DTO vocDto = vocService.findByVocId(replyDTO1.getVocId());
         String userId = vocDto.getWriter();
         UsersDTO usersDTO = usersService.getMyself(userId);
         log.info("이용자 {} 님에게 답글 작성 이메일을 전송합니다", userId);

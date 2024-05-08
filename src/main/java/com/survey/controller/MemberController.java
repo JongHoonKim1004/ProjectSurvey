@@ -8,6 +8,7 @@ import com.survey.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -31,29 +32,29 @@ public class MemberController {
 
     // 개인 정보 관련 메서드
         // Create (계정을 생성 할때 포인트 테이블도 같이 생성)
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<String> createMember(@RequestBody MemberDTO memberDTO) {
         // 개인정보 부분 생성
-        memberService.save(memberDTO);
-        log.info("Member Saved : {}", memberDTO.toString());
+        MemberDTO memberDTO1 = memberService.save(memberDTO);
+        log.info("Member Saved : {}", memberDTO1.toString());
 
         // 포인트 테이블 생성
         MemberPointDTO memberPointDTO = new MemberPointDTO();
-        memberPointDTO.setMemberId(memberDTO.getMemberId());
+        memberPointDTO.setMemberId(memberDTO1.getMemberId());
         memberPointDTO.setPointTotal(500);
         memberPointDTO.setPointUsed(0);
         memberPointDTO.setPointBalance(memberPointDTO.getPointTotal() - memberPointDTO.getPointUsed());
-        memberPointService.save(memberPointDTO);
-        log.info("Member Point Created: {}", memberPointDTO.toString());
+        MemberPointDTO memberPointDTO1 = memberPointService.save(memberPointDTO);
+        log.info("Member Point Created: {}", memberPointDTO1);
 
         // 포인트 이력 첫 로그 생성
         MemberPointLogDTO memberPointLogDTO = new MemberPointLogDTO();
-        memberPointLogDTO.setMemberId(memberDTO.getMemberId());
+        memberPointLogDTO.setMemberId(memberDTO1.getMemberId());
         memberPointLogDTO.setPointChange(500);
         memberPointLogDTO.setChangeType("신규 가입");
-        memberPointLogDTO.setChangeDate(LocalDateTime.now());
-        memberPointLogService.save(memberPointLogDTO);
-        log.info("Member Point Log Created: {}", memberPointLogDTO.toString());
+        MemberPointLogDTO memberPointLogDTO1 = memberPointLogService.save(memberPointLogDTO);
+        log.info("Member Point Log Created: {}", memberPointLogDTO1);
 
         return ResponseEntity.ok("Member Saved");
     }
@@ -176,7 +177,7 @@ public class MemberController {
 
         // Delete (포인트 이력 개별 삭제, 회원탈퇴로 인한 삭제는 회원정보 Delete 에서)
     @PostMapping("/pointlog/delete/{logId}")
-    public ResponseEntity<String> deletePointLog(@PathVariable String logId){
+    public ResponseEntity<String> deletePointLog(@PathVariable long logId){
         memberPointLogService.delete(logId);
         log.info("Member {}'s point log deleted", logId);
         return ResponseEntity.ok("Log Deleted");

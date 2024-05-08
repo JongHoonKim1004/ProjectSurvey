@@ -20,8 +20,8 @@ public class NoticeController {
     // Create
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody NoticeDTO noticeDTO) {
-        noticeService.save(noticeDTO);
-        log.info("Notice Saved: {}", noticeDTO);
+        NoticeDTO noticeDTO1 = noticeService.save(noticeDTO);
+        log.info("Notice Saved: {}", noticeDTO1);
 
         return ResponseEntity.ok("Success");
     }

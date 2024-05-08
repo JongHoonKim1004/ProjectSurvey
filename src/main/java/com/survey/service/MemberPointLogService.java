@@ -25,7 +25,7 @@ public class MemberPointLogService {
     // Convert DTO to Entity
     public MemberPointLog convertDTO(MemberPointLogDTO memberPointLogDTO) {
         MemberPointLog memberPointLog = new MemberPointLog();
-        if(memberPointLogDTO.getLogId() != null){
+        if(memberPointLogDTO.getLogId() != 0){
             memberPointLog.setLogId(memberPointLogDTO.getLogId());
         }
         memberPointLog.setMemberId(memberRepository.findByMemberId(memberPointLogDTO.getMemberId()));
@@ -55,10 +55,12 @@ public class MemberPointLogService {
     // Create
         // Normal
     @Transactional
-    public void save(MemberPointLogDTO memberPointLogDTO) {
+    public MemberPointLogDTO save(MemberPointLogDTO memberPointLogDTO) {
         MemberPointLog memberPointLog = convertDTO(memberPointLogDTO);
         MemberPointLog saved = memberPointLogRepository.save(memberPointLog);
         log.info("SAVED COMPLETE, ID : {}", saved.getLogId());
+
+        return convertEntity(saved);
     }
         // Create Plus Log
     @Transactional
@@ -112,7 +114,7 @@ public class MemberPointLogService {
     }
 
     // Get One
-    public MemberPointLogDTO getOne(String logId){
+    public MemberPointLogDTO getOne(long logId){
         MemberPointLog memberPointLog = memberPointLogRepository.findByLogId(logId);
         MemberPointLogDTO memberPointLogDTO = convertEntity(memberPointLog);
         return memberPointLogDTO;
@@ -128,7 +130,7 @@ public class MemberPointLogService {
 
     // Delete
     @Transactional
-    public void delete(String logId){
+    public void delete(long logId){
         MemberPointLog memberPointLog = memberPointLogRepository.findByLogId(logId);
         memberPointLogRepository.delete(memberPointLog);
         log.info("DELETE COMPLETE, ID: {}", memberPointLog.getLogId());

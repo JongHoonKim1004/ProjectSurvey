@@ -48,10 +48,12 @@ public class MemberPointService {
 
     // Create
     @Transactional
-    public void save(MemberPointDTO memberPointDTO) {
+    public MemberPointDTO save(MemberPointDTO memberPointDTO) {
         MemberPoint memberPoint = convertDTO(memberPointDTO);
         MemberPoint saved = memberPointRepository.save(memberPoint);
         log.info("SAVED COMPLETE, ID : {}", saved.getMemberId().getMemberId());
+
+        return convertMemberPoint(saved);
     }
 
     // Read

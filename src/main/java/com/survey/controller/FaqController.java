@@ -19,8 +19,8 @@ public class FaqController {
     // Create
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody FAQDTO faqDTO) {
-        faqService.save(faqDTO);
-        log.info("faq created: {}", faqDTO);
+        FAQDTO faqdto = faqService.save(faqDTO);
+        log.info("faq created: {}", faqdto);
 
         return ResponseEntity.ok("Success");
     }

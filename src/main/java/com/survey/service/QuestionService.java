@@ -48,10 +48,12 @@ public class QuestionService {
     }
     // Create
     @Transactional
-    public void save(QuestionDTO questionDTO) {
+    public QuestionDTO save(QuestionDTO questionDTO) {
         Question question = convertDTO(questionDTO);
         Question saved = questionRepository.save(question);
         log.info("Question saved: {}", saved.getQuestionId());
+
+        return convertQuestion(saved);
     }
 
     // Read

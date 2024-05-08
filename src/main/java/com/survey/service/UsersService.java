@@ -59,10 +59,12 @@ public class UsersService {
 
     // Create
     @Transactional
-    public void save(UsersDTO usersDTO){
+    public UsersDTO save(UsersDTO usersDTO){
         Users users = convertDTO(usersDTO);
         Users savedUsers = usersRepository.save(users);
         log.info("User Saved: {}", savedUsers);
+
+        return convertEntity(savedUsers);
     }
 
     // Read

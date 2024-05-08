@@ -19,8 +19,8 @@ public class AdminController {
     // Create
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody AdminDTO adminDTO) {
-        adminService.save(adminDTO);
-        log.info("Admin Saved Complete: {}", adminDTO.toString());
+        AdminDTO adminDTO1 = adminService.save(adminDTO);
+        log.info("Admin Saved Complete: {}", adminDTO1.toString());
         return ResponseEntity.ok("Admin Saved");
     }
 

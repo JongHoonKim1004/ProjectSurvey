@@ -9,7 +9,7 @@ import java.util.List;
 public interface MemberPointLogRepository extends JpaRepository<MemberPointLog, String> {
     public List<MemberPointLog> findByMemberIdOrderByChangeDateDesc(Member byMemberId);
 
-    public MemberPointLog findByLogId(String logId);
+    public MemberPointLog findByLogId(long logId);
 
     public List<MemberPointLog> findAllByOrderByChangeDateDesc();
 }

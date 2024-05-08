@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class MemberPointLog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String logId; // 포인트 이력 식별자
+    private long logId; // 포인트 이력 식별자
 
     @ManyToOne
     @JoinColumn(name = "MemberId")
@@ -27,5 +27,6 @@ public class MemberPointLog {
 
     @Column(nullable = false)
     private String changeType; // 변동 사유
+
     private LocalDateTime changeDate; // 변동 시간
 }

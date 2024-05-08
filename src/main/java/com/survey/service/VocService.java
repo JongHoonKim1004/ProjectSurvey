@@ -67,10 +67,12 @@ public class VocService {
 
     // Create
     @Transactional
-    public void save(VOC_DTO dto){
+    public VOC_DTO save(VOC_DTO dto){
         VOC voc = convertDTO(dto);
         VOC saved = vocRepository.save(voc);
         log.info("VOC saved: {}", saved.getVocId());
+
+        return convertEntity(saved);
     }
 
     // Read

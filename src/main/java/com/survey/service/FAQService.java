@@ -39,10 +39,12 @@ public class FAQService {
 
     // Create
     @Transactional
-    public void save(FAQDTO dto) {
+    public FAQDTO save(FAQDTO dto) {
         FAQ faq = convertDTO(dto);
         FAQ saved = faqRepository.save(faq);
         log.info("Saved: {}", saved.getTitle());
+
+        return convertFaq(saved);
     }
 
     // Read

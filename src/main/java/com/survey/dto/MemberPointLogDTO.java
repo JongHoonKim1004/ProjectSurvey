@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class MemberPointLogDTO {
-    private String logId; // 포인트 이력 식별자
+    private long logId; // 포인트 이력 식별자
 
     private String memberId; // 사업자 식별자
 

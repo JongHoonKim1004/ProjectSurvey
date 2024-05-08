@@ -58,10 +58,12 @@ public class NoticeService {
 
     // Create
     @Transactional
-    public void save(NoticeDTO noticeDTO) {
+    public NoticeDTO save(NoticeDTO noticeDTO) {
         Notice notice = convertDTO(noticeDTO);
         Notice saved = noticeRepository.save(notice);
         log.info("SAVED COMPLETE, ID: {}", saved.getId());
+
+        return convertEntity(saved);
     }
 
     // Read

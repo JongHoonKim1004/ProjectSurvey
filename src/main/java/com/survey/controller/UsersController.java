@@ -34,20 +34,20 @@ public class UsersController {
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@RequestBody UsersDTO usersDTO) {
         // 1. 개인정보 생성
-        usersService.save(usersDTO);
-        log.info("User created: {}", usersDTO);
+        UsersDTO usersDTO1 = usersService.save(usersDTO);
+        log.info("User created: {}", usersDTO1);
 
         // 2. 이용자 포인트 테이블 생성
-        usersPointService.save(usersDTO); // 사업자와 달리 이미 로직을 만들어 둠
+        usersPointService.save(usersDTO1); // 사업자와 달리 이미 로직을 만들어 둠
 
         // 3. 이용자 첫 포인트 이력 생성
         UsersPointLogDTO usersPointLogDTO = new UsersPointLogDTO();
-        usersPointLogDTO.setUsersId(usersDTO.getUsersId());
+        usersPointLogDTO.setUsersId(usersDTO1.getUsersId());
         usersPointLogDTO.setPointChange(500);
         usersPointLogDTO.setChangeType("신규 가입");
         usersPointLogDTO.setChangeDate(LocalDateTime.now());
         usersPointLogService.save(usersPointLogDTO);
-        log.info("User {}'s Point Log Created", usersDTO.getUsersId());
+        log.info("User {}'s Point Log Created", usersDTO1.getUsersId());
 
         return ResponseEntity.ok("User created");
 

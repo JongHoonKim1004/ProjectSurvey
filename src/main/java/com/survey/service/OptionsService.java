@@ -68,10 +68,12 @@ public class OptionsService {
         // 선택지 저장
         List<OptionsDTO> optionsDTOList = nextQuestionDTO.getOptions();
         for(OptionsDTO optionsDTO : optionsDTOList){
-            optionsRepository.save(convertDTO(optionsDTO));
-            log.info("Options Saved: {}", optionsDTO.getOptionsId());
+            Options saved = optionsRepository.save(convertDTO(optionsDTO));
+            log.info("Options Saved: {}", saved.getOptionsId());
         }
         log.info("Options All Saved");
+
+
     }
 
     // Read

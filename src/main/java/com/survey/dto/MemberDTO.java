@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Data
@@ -22,11 +23,13 @@ public class MemberDTO {
 
     private String addr; // 사업자 소재지
 
+    private String addrDetail; // 소재지 상세주소
+
     private String zipNo; // 소재지 우편번호
 
     private String phone; // 사업자 연락처
 
     private LocalDate estDate; // 사업자 설립일
 
-    private Integer compNo; // 사업자등록번호
+    private BigInteger compNo; // 사업자등록번호
 }

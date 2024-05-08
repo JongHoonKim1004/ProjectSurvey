@@ -21,8 +21,8 @@ public class VocController {
     // Create
     @PostMapping("/create")
     public ResponseEntity<String> create(VOC_DTO dto){
-        vocService.save(dto);
-        log.info("VOC Saved: {}", dto.toString());
+        VOC_DTO vocDto = vocService.save(dto);
+        log.info("VOC Saved: {}", vocDto.toString());
 
         return ResponseEntity.ok("VOC Saved");
     }
