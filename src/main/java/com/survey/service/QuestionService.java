@@ -31,6 +31,7 @@ public class QuestionService {
         question.setSurveyId(surveyRepository.findBySurveyId(questionDTO.getSurveyId()));
         question.setQuestion(questionDTO.getQuestion());
         question.setQuestionType(questionDTO.getQuestionType());
+        question.setOptionsType(questionDTO.getOptionsType());
         return question;
     }
 
@@ -42,6 +43,7 @@ public class QuestionService {
         questionDTO.setQuestion(question.getQuestion());
         questionDTO.setQuestionType(question.getQuestionType());
         questionDTO.setSurveyId(question.getSurveyId().getSurveyId());
+        questionDTO.setOptionsType(question.getOptionsType());
         return questionDTO;
     }
     // Create

@@ -18,6 +18,7 @@ public class UsersDTO {
     private String password; // 비밀번호
     private String phone; // 전화번호
     private String addr; // 주소
+    private String addrDetail; // 상세주소
     private String zipNo; // 우편번호
     private String birth; // 생년월일
     private String gender; // 성별

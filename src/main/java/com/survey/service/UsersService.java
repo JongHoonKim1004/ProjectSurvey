@@ -28,6 +28,7 @@ public class UsersService {
         users.setNickname(usersDTO.getNickname());
         users.setPhone(usersDTO.getPhone());
         users.setAddr(usersDTO.getAddr());
+        users.setAddrDetail(usersDTO.getAddrDetail());
         users.setZipNo(usersDTO.getZipNo());
         users.setBirth(usersDTO.getBirth());
         users.setGender(usersDTO.getGender());
@@ -46,6 +47,7 @@ public class UsersService {
         usersDTO.setNickname(users.getNickname());
         usersDTO.setPhone(users.getPhone());
         usersDTO.setAddr(users.getAddr());
+        usersDTO.setAddrDetail(users.getAddrDetail());
         usersDTO.setZipNo(users.getZipNo());
         usersDTO.setBirth(users.getBirth());
         usersDTO.setGender(users.getGender());

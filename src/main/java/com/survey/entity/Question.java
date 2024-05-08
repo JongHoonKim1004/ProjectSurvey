@@ -29,6 +29,9 @@ public class Question {
     private String question; // 질문 내용
 
     @Column(nullable = false)
-    private String questionType; // 질문 유형(1개 선택, 출생연도 기입 등등)
+    private String questionType; // 질문 유형(input type 을 기재)
+
+    @Column(nullable = false)
+    private String optionsType; // 응답 유형(1개 선택, 출생연도 기입 등등 기재)
 
 }

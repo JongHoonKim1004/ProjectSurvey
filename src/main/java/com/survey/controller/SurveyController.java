@@ -290,6 +290,18 @@ public class SurveyController {
                 Integer memberPointBalance = usersPointDTO.getPointBalance() - point;
 
                 // 3-1. 사업자 잔여 포인트 일정 금액 이하일 시, 경고 이메일 전송 (이메일 API 설계 후)
+                String memberName = memberService.findByMemberId(memberId).getName();
+
+                if(memberPointBalance < 10000){
+                    Integer code = emailService.createRandom();
+                    String content = emailService.createEmailWithCode("memberPoint", code);
+                    try{
+                        emailService.sendEmail(memberName, content, "memberPoint");
+                        log.info("Email Send : for member's point");
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
 
                 // 4. 사업자 최대 포인트 사용
                 MemberPointDTO usedMemberPointDTO = memberPointService.usePoint(memberPointDTO, point);

@@ -22,6 +22,8 @@ public class QuestionDTO {
 
     private String question; // 질문 내용
 
-    private String questionType; // 질문 유형(1개 선택, 출생연도 기입 등등)
+    private String questionType; // 질문 유형(input type 기재)
+
+    private String optionsType; // 응답 유형(1개 선택, 출생연도 기입 등등 기재)
 
 }
