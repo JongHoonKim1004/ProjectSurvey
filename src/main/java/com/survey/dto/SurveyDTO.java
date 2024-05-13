@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class SurveyDTO {
-    private String SurveyId; // 설문조사 식별자
+    private String surveyId; // 설문조사 식별자
 
     private String name; // 설문조사 이름
 
     private String description; // 설문조사 설명
 
-    private String surveyMember; // 설문 등록 사업자
+    private String memberId; // 설문 등록 사업자
 
     private Integer point; // 지급 포인트
 

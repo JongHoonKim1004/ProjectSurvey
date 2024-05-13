@@ -9,5 +9,5 @@ import java.util.List;
 public interface SurveyRepository extends JpaRepository<Survey, String> {
     public Survey findBySurveyId(String surveyId);
 
-    public List<Survey> findBySurveyMember(Member surveyMember);
+    public List<Survey> findByMemberId(Member memberId);
 }

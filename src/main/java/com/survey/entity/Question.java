@@ -19,6 +19,7 @@ public class Question {
     @GeneratedValue(generator = "system-uuid")
     private String questionId; // 질문 식별자
 
+
     private Integer questionNumber; // 질문 번호
     
     @ManyToOne

@@ -20,7 +20,7 @@ public class VocController {
 
     // Create
     @PostMapping("/create")
-    public ResponseEntity<String> create(VOC_DTO dto){
+    public ResponseEntity<String> create(@RequestBody VOC_DTO dto){
         VOC_DTO vocDto = vocService.save(dto);
         log.info("VOC Saved: {}", vocDto.toString());
 

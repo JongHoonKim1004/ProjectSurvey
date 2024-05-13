@@ -37,7 +37,7 @@ public class VocService {
         }
         voc.setTitle(dto.getTitle());
         voc.setContent(dto.getContent());
-        voc.setWriter(usersRepository.findByUsersId(dto.getWriter()));
+        voc.setWriter(usersRepository.findByName(dto.getWriter()));
         if(dto.getRegDate() != null){
             voc.setRegDate(dto.getRegDate());
         } else {
@@ -55,7 +55,7 @@ public class VocService {
         dto.setVocId(voc.getVocId());
         dto.setTitle(voc.getTitle());
         dto.setContent(voc.getContent());
-        dto.setWriter(voc.getWriter().getUsersId());
+        dto.setWriter(voc.getWriter().getName());
         dto.setRegDate(voc.getRegDate());
         dto.setSurveyId(voc.getSurveyId());
         if(replyRepository.findByVocId(vocRepository.findByVocId(dto.getVocId())) != null){
@@ -68,9 +68,10 @@ public class VocService {
     // Create
     @Transactional
     public VOC_DTO save(VOC_DTO dto){
+        log.info("Saving Voc : {}", dto.toString());
         VOC voc = convertDTO(dto);
         VOC saved = vocRepository.save(voc);
-        log.info("VOC saved: {}", saved.getVocId());
+        log.info("VOC saved: {}", saved.toString());
 
         return convertEntity(saved);
     }
@@ -86,7 +87,7 @@ public class VocService {
     // For Customer
     public List<VOC_DTO> findByWriter(String writer){
         List<VOC_DTO> vocDTOList = new ArrayList<>();
-        List<VOC> vocList = vocRepository.findByWriter(usersRepository.findByUsersId(writer));
+        List<VOC> vocList = vocRepository.findByWriter_Name(writer);
         for(VOC voc : vocList){
             VOC_DTO dto = convertEntity(voc);
             vocDTOList.add(dto);

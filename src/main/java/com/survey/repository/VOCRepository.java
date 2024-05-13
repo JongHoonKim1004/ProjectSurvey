@@ -9,5 +9,5 @@ import java.util.List;
 public interface VOCRepository extends JpaRepository<VOC, String> {
     public VOC findByVocId(String vocId);
 
-    public List<VOC> findByWriter(Users byUsersId);
+    public    List<VOC> findByWriter_Name(String Name);
 }

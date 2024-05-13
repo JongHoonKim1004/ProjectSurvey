@@ -8,4 +8,6 @@ public interface AdminRepository extends JpaRepository<Admin, String> {
     public Admin findByName(String name);
 
     public Admin findByAdminId(String adminId);
+
+    public Admin findByNickname(String writer);
 }

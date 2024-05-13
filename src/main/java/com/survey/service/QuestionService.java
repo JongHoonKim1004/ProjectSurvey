@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,6 +22,11 @@ public class QuestionService {
     @Autowired
     private SurveyRepository surveyRepository;
 
+    // Constructor injection for SurveyRepository
+    public QuestionService(SurveyRepository surveyRepository) {
+        this.surveyRepository = surveyRepository;
+    }
+
     // Convert DTO to Entity
     public Question convertDTO(QuestionDTO questionDTO) {
         Question question = new Question();
@@ -28,7 +34,13 @@ public class QuestionService {
             question.setQuestionId(questionDTO.getQuestionId());
         }
         question.setQuestionNumber(questionDTO.getQuestionNumber());
-        question.setSurveyId(surveyRepository.findBySurveyId(questionDTO.getSurveyId()));
+        Optional<Survey> surveyOptional = Optional.ofNullable(surveyRepository.findBySurveyId(questionDTO.getSurveyId()));
+        if (surveyOptional.isPresent()) {
+            question.setSurveyId(surveyOptional.get());
+        } else {
+            // 필요한 경우 적절한 예외를 던지거나 로깅
+            throw new IllegalArgumentException("Survey with ID " + questionDTO.getSurveyId() + " not found");
+        }
         question.setQuestion(questionDTO.getQuestion());
         question.setQuestionType(questionDTO.getQuestionType());
         question.setOptionsType(questionDTO.getOptionsType());
@@ -51,7 +63,7 @@ public class QuestionService {
     public QuestionDTO save(QuestionDTO questionDTO) {
         Question question = convertDTO(questionDTO);
         Question saved = questionRepository.save(question);
-        log.info("Question saved: {}", saved.getQuestionId());
+        log.info("Question saved: {}", saved);
 
         return convertQuestion(saved);
     }
@@ -100,11 +112,12 @@ public class QuestionService {
 
     // Modify
     @Transactional
-    public void update(QuestionDTO questionDTO) {
+    public QuestionDTO update(QuestionDTO questionDTO) {
         Question question = convertDTO(questionDTO);
         Question saved = questionRepository.save(question);
         log.info("Question Updated: {}", saved.getQuestionId());
 
+        return convertQuestion(saved);
     }
 
     // Delete

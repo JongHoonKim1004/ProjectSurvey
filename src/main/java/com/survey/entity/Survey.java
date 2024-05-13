@@ -27,9 +27,8 @@ public class Survey {
 
     private String description; // 설문조사 설명
 
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_NICKNAME")
-    private Member surveyMember; // 설문 등록 사업자
+
+    private String memberId; // 설문 등록 사업자
 
     @Column(nullable = false)
     private Integer point; // 지급 포인트

@@ -76,6 +76,12 @@ public class AdminService {
         return convertEntity(admin);
     }
 
+    // Find By name
+    public AdminDTO findByName(String name){
+        Admin admin = adminRepository.findByName(name);
+        return admin != null ? convertEntity(admin) : null ;
+    }
+
     // Update
     @Transactional
     public void update(AdminDTO adminDTO) {

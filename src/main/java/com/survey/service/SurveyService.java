@@ -30,7 +30,7 @@ public class SurveyService {
         }
         survey.setName(surveyDTO.getName());
         survey.setDescription(surveyDTO.getDescription());
-        survey.setSurveyMember(memberRepository.findByMemberId(surveyDTO.getSurveyMember()));
+        survey.setMemberId(surveyDTO.getMemberId());
         survey.setPoint(surveyDTO.getPoint());
         survey.setPointAtLeast(surveyDTO.getPointAtLeast());
         if(surveyDTO.getRegDate() != null){
@@ -51,7 +51,7 @@ public class SurveyService {
         surveyDTO.setSurveyId(survey.getSurveyId());
         surveyDTO.setName(survey.getName());
         surveyDTO.setDescription(survey.getDescription());
-        surveyDTO.setSurveyMember(survey.getSurveyMember().getMemberId());
+        surveyDTO.setMemberId(survey.getMemberId());
         surveyDTO.setPoint(survey.getPoint());
         surveyDTO.setPointAtLeast(survey.getPointAtLeast());
         surveyDTO.setRegDate(survey.getRegDate());
@@ -66,7 +66,7 @@ public class SurveyService {
     public SurveyDTO save(SurveyDTO surveyDTO){
         Survey survey = convertDTO(surveyDTO);
         Survey savedSurvey = surveyRepository.save(survey);
-        log.info("SAVED SURVEY: {}", savedSurvey.getSurveyId());
+        log.info("SAVED SURVEY: {}", savedSurvey.toString());
         return convertSurvey(savedSurvey);
     }
 
@@ -84,7 +84,7 @@ public class SurveyService {
     // Get ListByMember
     public List<SurveyDTO> findByMemberId(String MemberId){
         Member member = memberRepository.findByMemberId(MemberId);
-        List<Survey> surveyList = surveyRepository.findBySurveyMember(memberRepository.findByMemberId(MemberId));
+        List<Survey> surveyList = surveyRepository.findByMemberId(memberRepository.findByMemberId(MemberId));
         List<SurveyDTO> surveyDTOs = new ArrayList<>();
         for (Survey survey : surveyList) {
             surveyDTOs.add(convertSurvey(survey));

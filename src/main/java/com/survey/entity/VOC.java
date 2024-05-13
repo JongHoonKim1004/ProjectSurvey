@@ -24,15 +24,15 @@ public class VOC {
     @Column(nullable = false)
     private String title; // 문의 제목
 
-    @Column(nullable = false)
+
     private String content; // 문의 내용
 
     @ManyToOne
-    @JoinColumn(name="writer")
+    @JoinColumn(name="writer", referencedColumnName = "name")
     private Users writer; // 작성자(이용자)
 
     private LocalDateTime regDate; // 작성일
-
+    private Boolean reply; // 답변 여부
     @ManyToOne
     @JoinColumn(name = "SurveyId", referencedColumnName = "SurveyId", nullable = true)
     private Survey surveyId; // 설문조사 식별자(선택)

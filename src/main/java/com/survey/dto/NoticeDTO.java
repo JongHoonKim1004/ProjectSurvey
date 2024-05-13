@@ -21,5 +21,5 @@ public class NoticeDTO {
 
     private LocalDateTime regDate; // 작성일
     private LocalDateTime updateDate; // 수정일
-    private Integer readCount; // 조회수
+    private Integer readCount = 0; // 조회수
 }

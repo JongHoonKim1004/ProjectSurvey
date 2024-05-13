@@ -83,6 +83,11 @@ public class MemberService {
         return memberDTOs;
     }
 
+    // Find By name
+    public MemberDTO findByName(String name){
+        Member member = memberRepository.findByName(name);
+        return member != null ?  convertMember(member) : null ;
+    }
 
     // Update
     @Transactional

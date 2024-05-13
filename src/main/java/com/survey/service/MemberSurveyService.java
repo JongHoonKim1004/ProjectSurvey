@@ -65,7 +65,7 @@ public class MemberSurveyService {
     public void save(MemberSurveyDTO memberSurveyDTO) {
         MemberSurvey memberSurvey = convertDTO(memberSurveyDTO);
         MemberSurvey saved = memberSurveyRepository.save(memberSurvey);
-        log.info("SAVED COMPLETE, ID : {}",saved.getLogId());
+        log.info("SAVED COMPLETE, ID : {}",saved);
     }
 
     // Read

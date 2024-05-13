@@ -6,6 +6,7 @@ import com.survey.service.NoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +19,10 @@ public class NoticeController {
     private NoticeService noticeService;
 
     // Create
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody NoticeDTO noticeDTO) {
+        log.info("Creating notice : {}", noticeDTO);
         NoticeDTO noticeDTO1 = noticeService.save(noticeDTO);
         log.info("Notice Saved: {}", noticeDTO1);
 

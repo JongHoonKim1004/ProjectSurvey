@@ -24,10 +24,6 @@ public class MemberController {
     private MemberPointService memberPointService;
     @Autowired
     private MemberPointLogService memberPointLogService;
-    @Autowired
-    private MemberSurveyService memberSurveyService;
-    @Autowired
-    private SurveyService surveyService;
 
 
     // 개인 정보 관련 메서드
@@ -127,8 +123,8 @@ public class MemberController {
     
         // Update
             // ChargePoint
-    @PostMapping("/point/memberCharge/{memberId}")
-    public ResponseEntity<MemberPointDTO> memberChargePoint(@PathVariable String memberId, @RequestParam("point") Integer point) {
+    @PostMapping("/point/memberCharge/{memberId}/{point}")
+    public ResponseEntity<MemberPointDTO> memberChargePoint(@PathVariable String memberId, @PathVariable Integer point) {
         // 포인트 테이블에 충전
         MemberPointDTO memberPointDTO = memberPointService.findByMemberId(memberId);
         Integer totalPoint = memberPointDTO.getPointTotal();

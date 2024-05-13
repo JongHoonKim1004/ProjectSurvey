@@ -51,29 +51,41 @@ public class OptionsService {
 
     // Create
     @Transactional
-    public void save(OptionsDTO optionsDTO) {
+    public OptionsDTO save(OptionsDTO optionsDTO) {
         Options options = convertDTO(optionsDTO);
         Options savedOptions = optionsRepository.save(options);
-        log.info("Options Saved: {}", savedOptions.getOptionsId());
+        log.info("Options Saved: {}", savedOptions);
+
+        return convertEntity(savedOptions);
     }
 
     // Save With NextQuestionDTO
     @Transactional
-    public void saveWithNextQuestionDTO(NextQuestionDTO nextQuestionDTO) {
+    public NextQuestionDTO saveWithNextQuestionDTO(NextQuestionDTO nextQuestionDTO) {
+        // 반환할 DTO 설정
+        NextQuestionDTO returnDTO = new NextQuestionDTO();
         // 질문 저장
         QuestionDTO questionDTO = nextQuestionDTO.getQuestion();
-        questionService.save(questionDTO);
-        log.info("Question Saved: {}", questionDTO.getQuestionId());
+        QuestionDTO questionDTO1 = questionService.save(questionDTO);
+        returnDTO.setQuestion(questionDTO1);
+        log.info("Question Saved: {}", questionDTO1.getQuestionId());
+
+        // 저장한 질문에서 선택지에 담을 질문 id 호출
+        String questionId = questionDTO1.getQuestionId();
 
         // 선택지 저장
         List<OptionsDTO> optionsDTOList = nextQuestionDTO.getOptions();
+        List<OptionsDTO> optionsDTOList1 = new ArrayList<>();
         for(OptionsDTO optionsDTO : optionsDTOList){
-            Options saved = optionsRepository.save(convertDTO(optionsDTO));
-            log.info("Options Saved: {}", saved.getOptionsId());
+            optionsDTO.setQuestionId(questionId);
+            OptionsDTO optionsDTO1 = save(optionsDTO);
+            optionsDTOList1.add(optionsDTO1);
+            log.info("Options Saved: {}", optionsDTO1.getOptionsId());
         }
+        returnDTO.setOptions(optionsDTOList1);
         log.info("Options All Saved");
 
-
+        return returnDTO;
     }
 
     // Read
@@ -113,10 +125,12 @@ public class OptionsService {
 
     // Update
     @Transactional
-    public void update(OptionsDTO optionsDTO) {
+    public OptionsDTO update(OptionsDTO optionsDTO) {
         Options options = convertDTO(optionsDTO);
-        optionsRepository.save(options);
+        Options saved= optionsRepository.save(options);
         log.info("Options Updated: {}", options.getOptionsId());
+
+        return convertEntity(saved);
     }
 
     // Delete

@@ -86,6 +86,13 @@ public class UsersService {
         return usersDTO;
     }
 
+    // Find By name
+    public UsersDTO findByName(String name){
+        Users users = usersRepository.findByName(name);
+        return users != null ? convertEntity(users) : null ;
+    }
+
+
     // Update
     @Transactional
     public void update(UsersDTO usersDTO){

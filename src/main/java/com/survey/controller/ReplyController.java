@@ -38,9 +38,10 @@ public class ReplyController {
         // 답글이 작성되면 이메일 전송
             // 1. 작성자 확인
         VOC_DTO vocDto = vocService.findByVocId(replyDTO1.getVocId());
-        String userId = vocDto.getWriter();
-        UsersDTO usersDTO = usersService.getMyself(userId);
-        log.info("이용자 {} 님에게 답글 작성 이메일을 전송합니다", userId);
+        String usersName = vocDto.getWriter();
+        UsersDTO usersDTO = usersService.findByName(usersName);
+        log.info("이용자 {} 님에게 답글 작성 이메일을 전송합니다", usersName);
+
             // 2. 이메일 전송
         Integer code = emailService.createRandom();
         String content = emailService.createEmailWithCode("reply", code);

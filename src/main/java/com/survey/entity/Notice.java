@@ -23,9 +23,8 @@ public class Notice {
     @Column(nullable = false)
     private String content; // 내용
 
-    @ManyToOne
-    @JoinColumn(name = "writer",referencedColumnName = "nickname")
-    private Admin writer; // 작성자(관리자 한정)
+    @Column(nullable = false)
+    private String writer; // 작성자(관리자 한정)
 
     private LocalDateTime regDate; // 작성일
     private LocalDateTime updateDate; // 수정일

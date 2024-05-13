@@ -40,10 +40,17 @@ public class SurveyController {
 
     // 설문조사 파트
         // Create Survey -> Get SurveyId
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<SurveyDTO> createSurvey(@RequestBody SurveyDTO surveyDTO) {
         SurveyDTO savedSurvey = surveyService.save(surveyDTO);
         log.info("Survey created: {}", savedSurvey);
+
+        String surveyId = savedSurvey.getSurveyId();
+        MemberSurveyDTO memberSurveyDTO = new MemberSurveyDTO();
+        memberSurveyDTO.setSurveyId(surveyId);
+        memberSurveyDTO.setMemberId(savedSurvey.getMemberId());
+
         return ResponseEntity.ok(savedSurvey);
     }
 
@@ -123,15 +130,15 @@ public class SurveyController {
         // Create
             // 새 질문 & 선택지 생성
     @PostMapping("/question/create/{surveyId}")
-    public ResponseEntity<String> createQuestion(@PathVariable String surveyId, @RequestBody NextQuestionDTO nextQuestionDTO) {
+    public ResponseEntity<NextQuestionDTO> createQuestion(@PathVariable String surveyId, @RequestBody NextQuestionDTO nextQuestionDTO) {
         QuestionDTO questionDTO = nextQuestionDTO.getQuestion();
         questionDTO.setSurveyId(surveyId);
         nextQuestionDTO.setQuestion(questionDTO);
 
-        optionsService.saveWithNextQuestionDTO(nextQuestionDTO);
+        NextQuestionDTO nextQuestionDTO1 = optionsService.saveWithNextQuestionDTO(nextQuestionDTO);
         log.info("Question And Options created");
 
-        return ResponseEntity.ok("Question Created");
+        return ResponseEntity.ok(nextQuestionDTO1);
     }
 
         // Read
@@ -151,21 +158,30 @@ public class SurveyController {
         // Update
             // 질문 변경
     @PostMapping("/question/update/question/{questionId}")
-    public ResponseEntity<String> updateQuestion(@PathVariable String questionId, @RequestBody QuestionDTO questionDTO) {
-        questionDTO.setQuestionId(questionId);
-        questionService.update(questionDTO);
-        log.info("Question updated Id: {}", questionDTO.getQuestionId());
-        return ResponseEntity.ok("Question updated");
+    public ResponseEntity<NextQuestionDTO> updateQuestion(@PathVariable String questionId, @RequestBody NextQuestionDTO nextQuestionDTO) {
+        // 반환할 DTO 설정
+        NextQuestionDTO nextQuestionDTO1 = new NextQuestionDTO();
+
+        // 질문 DTO 변경
+        QuestionDTO questionDTO = nextQuestionDTO.getQuestion();
+        QuestionDTO questionDTO1 = questionService.update(questionDTO);
+        nextQuestionDTO1.setQuestion(questionDTO1);
+        log.info("Question updated Id: {}", questionDTO1.getQuestionId());
+
+        // 선택지 DTO 목록 변경
+        List<OptionsDTO> optionsDTOList = nextQuestionDTO.getOptions();
+        List<OptionsDTO> optionsDTOList1 = new ArrayList<>();
+        for(OptionsDTO optionsDTO : optionsDTOList) {
+            optionsDTO.setQuestionId(questionId);
+            OptionsDTO optionsDTO1 = optionsService.update(optionsDTO);
+            optionsDTOList1.add(optionsDTO1);
+            log.info("Options updated Id: {}", optionsDTO1.getOptionsId());
+        }
+        nextQuestionDTO1.setOptions(optionsDTOList1);
+
+        return ResponseEntity.ok(nextQuestionDTO1);
     }
 
-            // 선택지 변경
-    @PostMapping("/question/update/options/{optionsId}")
-    public ResponseEntity<String> updateOptions(@PathVariable String optionsId, @RequestBody OptionsDTO optionsDTO){
-        optionsDTO.setOptionsId(optionsId);
-        optionsService.save(optionsDTO);
-        log.info("Options Updated Id: {}", optionsDTO.getOptionsId());
-        return ResponseEntity.ok("Options Updated");
-    }
 
         // Delete
             // 질문 삭제
@@ -203,7 +219,7 @@ public class SurveyController {
             // 1. 설문 조사 및 응답에서 조사 DTO, 이름 추출
         SurveyDTO surveyDTO = surveyService.findBySurveyId(surveyId);
         String userId = responseDTO.getUsersId();
-        String memberId = surveyDTO.getSurveyMember();
+        String memberId = surveyDTO.getMemberId();
         OptionsDTO optionsDTO = optionsService.findByOptionsId(responseDTO.getOptionsId());
         Boolean terminate = optionsDTO.isTerminate();
 

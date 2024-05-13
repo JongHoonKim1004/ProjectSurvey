@@ -2,6 +2,7 @@ package com.survey.service;
 
 import com.survey.dto.NoticeDTO;
 import com.survey.entity.Notice;
+import com.survey.repository.AdminRepository;
 import com.survey.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import java.util.List;
 public class NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
+    @Autowired
+    private AdminRepository adminRepository;
 
     // Convert DTO to Entity
     public Notice convertDTO(NoticeDTO noticeDTO) {
@@ -26,6 +29,7 @@ public class NoticeService {
         }
         notice.setTitle(noticeDTO.getTitle());
         notice.setContent(noticeDTO.getContent());
+        notice.setWriter(noticeDTO.getWriter());
         if(noticeDTO.getRegDate() != null && noticeDTO.getUpdateDate() != null){
             notice.setRegDate(noticeDTO.getRegDate());
             notice.setUpdateDate(noticeDTO.getUpdateDate());
@@ -33,11 +37,9 @@ public class NoticeService {
             notice.setRegDate(LocalDateTime.now());
             notice.setUpdateDate(LocalDateTime.now());
         }
-        if(noticeDTO.getReadCount() > 0){
-            notice.setReadCount(noticeDTO.getReadCount());
-        } else {
-            notice.setReadCount(0);
-        }
+        notice.setReadCount(
+                noticeDTO.getReadCount() != null ? noticeDTO.getReadCount() : 0
+        );
 
         return notice;
     }
@@ -47,7 +49,7 @@ public class NoticeService {
         NoticeDTO noticeDTO = new NoticeDTO();
         noticeDTO.setId(notice.getId());
         noticeDTO.setTitle(notice.getTitle());
-        noticeDTO.setWriter(notice.getWriter().getName());
+        noticeDTO.setWriter(notice.getWriter());
         noticeDTO.setContent(notice.getContent());
         noticeDTO.setRegDate(notice.getRegDate());
         noticeDTO.setUpdateDate(notice.getUpdateDate());
@@ -61,7 +63,7 @@ public class NoticeService {
     public NoticeDTO save(NoticeDTO noticeDTO) {
         Notice notice = convertDTO(noticeDTO);
         Notice saved = noticeRepository.save(notice);
-        log.info("SAVED COMPLETE, ID: {}", saved.getId());
+        log.info("SAVED COMPLETE, ID: {}", saved.toString());
 
         return convertEntity(saved);
     }
