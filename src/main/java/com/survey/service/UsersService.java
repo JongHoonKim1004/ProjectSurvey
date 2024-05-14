@@ -5,6 +5,7 @@ import com.survey.entity.Users;
 import com.survey.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,9 @@ import java.util.List;
 public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Convert DTO to Entity
     public Users convertDTO(UsersDTO usersDTO) {
@@ -61,6 +65,8 @@ public class UsersService {
     @Transactional
     public UsersDTO save(UsersDTO usersDTO){
         Users users = convertDTO(usersDTO);
+        String encodedPassword = passwordEncoder.encode(users.getPassword());
+        users.setPassword(encodedPassword);
         Users savedUsers = usersRepository.save(users);
         log.info("User Saved: {}", savedUsers);
 
@@ -97,6 +103,8 @@ public class UsersService {
     @Transactional
     public void update(UsersDTO usersDTO){
         Users users = convertDTO(usersDTO);
+        String encodedPassword = passwordEncoder.encode(users.getPassword());
+        users.setPassword(encodedPassword);
         Users savedUsers = usersRepository.save(users);
         log.info("User Updated: {}", savedUsers);
     }
@@ -110,5 +118,15 @@ public class UsersService {
 
     }
 
+    // 로그인 관련
+    // User check
+    public Users getByCredentials(final String name, final String password, final PasswordEncoder passwordEncoder) {
+        final Users originalUser = usersRepository.findByName(name);
 
+        if(originalUser != null && passwordEncoder.matches(password, originalUser.getPassword())){
+            return originalUser;
+        }
+
+        return null;
+    }
 }

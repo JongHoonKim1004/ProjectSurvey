@@ -24,4 +24,6 @@ public class UsersDTO {
     private String gender; // 성별
     private String occupation; // 직업
     private String married; // 결혼 여부
+
+    private String token; // JWT Token
 }

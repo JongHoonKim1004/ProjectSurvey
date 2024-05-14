@@ -2,9 +2,11 @@ package com.survey.service;
 
 import com.survey.dto.MemberDTO;
 import com.survey.entity.Member;
+import com.survey.entity.Users;
 import com.survey.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,5 +105,17 @@ public class MemberService {
         Member member = memberRepository.findByMemberId(memberId);
         memberRepository.delete(member);
         log.info("DELETE COMPLETE, MEMBER ID : {}", member.getMemberId());
+    }
+
+    // 로그인 관련
+    // User check
+    public Member getByCredentials(final String name, final String password, final PasswordEncoder passwordEncoder) {
+        final Member originalUser = memberRepository.findByName(name);
+
+        if(originalUser != null && passwordEncoder.matches(password, originalUser.getPassword())){
+            return originalUser;
+        }
+
+        return null;
     }
 }

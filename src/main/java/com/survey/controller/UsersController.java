@@ -1,9 +1,11 @@
 package com.survey.controller;
 
+import com.survey.dto.ErrorDTO;
 import com.survey.dto.UsersDTO;
 import com.survey.dto.UsersPointDTO;
 import com.survey.dto.UsersPointLogDTO;
 import com.survey.entity.Users;
+import com.survey.security.TokenProvider;
 import com.survey.service.UsersPointLogService;
 import com.survey.service.UsersPointService;
 import com.survey.service.UsersService;
@@ -11,6 +13,8 @@ import com.survey.service.UsersSurveyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,7 +32,11 @@ public class UsersController {
     private UsersPointService usersPointService;
     @Autowired
     private UsersPointLogService usersPointLogService;
-    
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
+
     // 개인정보
         // Create
     @PostMapping("/create")
@@ -170,5 +178,28 @@ public class UsersController {
         usersPointLogService.delete(logId);
         log.info("User's log Deleted: {}", logId);
         return ResponseEntity.ok("Log Deleted");
+    }
+
+    /*                              로그인                                         */
+    // 로그인 처리
+
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @PostMapping("/login")
+    public ResponseEntity<?> usersLogin(@RequestBody UsersDTO usersDTO){
+        Users users = usersService.getByCredentials(usersDTO.getName(), usersDTO.getPassword(), passwordEncoder);
+        log.info("User found : {}", users);
+        if(users != null){
+            final String token = tokenProvider.create(users);
+            final UsersDTO usersDTO1 = UsersDTO.builder()
+                    .name(users.getName())
+                    .nickname(users.getNickname())
+                    .token(token)
+                    .build();
+
+            return ResponseEntity.ok(usersDTO1);
+        } else {
+            ErrorDTO errorDTO = new ErrorDTO().builder().error("Invalid username or password").build();
+            return ResponseEntity.badRequest().body(errorDTO);
+        }
     }
 }

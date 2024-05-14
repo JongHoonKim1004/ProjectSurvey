@@ -21,4 +21,6 @@ public class AdminDTO {
     private String phone; // 전화번호
 
     private String employeeNo; // 사원번호
+
+    private String token; // JWT Token
 }

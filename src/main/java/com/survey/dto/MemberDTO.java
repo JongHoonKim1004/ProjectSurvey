@@ -32,4 +32,6 @@ public class MemberDTO {
     private LocalDate estDate; // 사업자 설립일
 
     private BigInteger compNo; // 사업자등록번호
+
+    private String token; // JWT Token
 }
