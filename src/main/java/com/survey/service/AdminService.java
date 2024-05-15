@@ -2,9 +2,11 @@ package com.survey.service;
 
 import com.survey.dto.AdminDTO;
 import com.survey.entity.Admin;
+import com.survey.entity.Users;
 import com.survey.repository.AdminRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,5 +100,14 @@ public class AdminService {
         log.info("Admin Deleted: {}", admin.getAdminId());
     }
 
+    // User check
+    public Admin getByCredentials(final String name, final String password, final PasswordEncoder passwordEncoder) {
+        final Admin originalUser = adminRepository.findByName(name);
 
+        if(originalUser != null && passwordEncoder.matches(password, originalUser.getPassword())){
+            return originalUser;
+        }
+
+        return null;
+    }
 }

@@ -1,13 +1,15 @@
 package com.survey.controller;
 
-import com.survey.dto.MemberDTO;
-import com.survey.dto.MemberPointDTO;
-import com.survey.dto.MemberPointLogDTO;
+import com.survey.dto.*;
+import com.survey.entity.Member;
 import com.survey.entity.MemberPoint;
+import com.survey.security.TokenProvider;
 import com.survey.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +26,10 @@ public class MemberController {
     private MemberPointService memberPointService;
     @Autowired
     private MemberPointLogService memberPointLogService;
+    @Autowired
+    private TokenProvider tokenProvider;
 
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 개인 정보 관련 메서드
         // Create (계정을 생성 할때 포인트 테이블도 같이 생성)
@@ -32,6 +37,8 @@ public class MemberController {
     @PostMapping("/create")
     public ResponseEntity<String> createMember(@RequestBody MemberDTO memberDTO) {
         // 개인정보 부분 생성
+        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
+        memberDTO.setPassword(encodedPassword);
         MemberDTO memberDTO1 = memberService.save(memberDTO);
         log.info("Member Saved : {}", memberDTO1.toString());
 
@@ -177,5 +184,26 @@ public class MemberController {
         memberPointLogService.delete(logId);
         log.info("Member {}'s point log deleted", logId);
         return ResponseEntity.ok("Log Deleted");
+    }
+
+    // Login
+    @PostMapping("/login")
+    public ResponseEntity<?> memberLogin(@RequestBody MemberDTO memberDTO) {
+        Member member = memberService.getByCredentials(memberDTO.getName(), memberDTO.getPassword(), passwordEncoder);
+        log.info("Member Found : {}", member);
+
+        if(member != null){
+            final String token = tokenProvider.create(member);
+            final AdminDTO adminDTO1 = AdminDTO.builder()
+                    .name(member.getName())
+                    .nickname(member.getNickname())
+                    .token(token)
+                    .build();
+
+            return ResponseEntity.ok(adminDTO1);
+        } else {
+            ErrorDTO errorDTO = new ErrorDTO().builder().error("Invalid username or password").build();
+            return ResponseEntity.badRequest().body(errorDTO);
+        }
     }
 }

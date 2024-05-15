@@ -69,6 +69,13 @@ public class SurveyController {
         return ResponseEntity.ok(surveyDTO);
     }
 
+            // Get List can Participate
+    @GetMapping("/list/active")
+    public ResponseEntity<List<SurveyDTO>> listActiveSurveys() {
+        List<SurveyDTO> surveyDTOList = surveyService.getActiveSurveys();
+        log.info("Active surveys: {}", surveyDTOList);
+        return ResponseEntity.ok(surveyDTOList);
+    }
         // Update
     @PostMapping("/update/{surveyId}")
     public ResponseEntity<String> updateSurvey(@PathVariable String surveyId, @RequestBody SurveyDTO surveyDTO) {

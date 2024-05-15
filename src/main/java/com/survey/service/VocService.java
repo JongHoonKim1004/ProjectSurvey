@@ -38,6 +38,11 @@ public class VocService {
         voc.setTitle(dto.getTitle());
         voc.setContent(dto.getContent());
         voc.setWriter(usersRepository.findByName(dto.getWriter()));
+        if(dto.getReply() != null){
+            voc.setReply(dto.getReply());
+        } else {
+            voc.setReply(false);
+        }
         if(dto.getRegDate() != null){
             voc.setRegDate(dto.getRegDate());
         } else {
@@ -56,6 +61,7 @@ public class VocService {
         dto.setTitle(voc.getTitle());
         dto.setContent(voc.getContent());
         dto.setWriter(voc.getWriter().getName());
+        dto.setReply(voc.getReply());
         dto.setRegDate(voc.getRegDate());
         dto.setSurveyId(voc.getSurveyId());
         if(replyRepository.findByVocId(vocRepository.findByVocId(dto.getVocId())) != null){

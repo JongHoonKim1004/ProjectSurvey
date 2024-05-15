@@ -7,6 +7,9 @@ import com.survey.repository.MemberRepository;
 import com.survey.repository.SurveyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +88,18 @@ public class SurveyService {
     public List<SurveyDTO> findByMemberId(String MemberId){
         Member member = memberRepository.findByMemberId(MemberId);
         List<Survey> surveyList = surveyRepository.findByMemberId(memberRepository.findByMemberId(MemberId));
+        List<SurveyDTO> surveyDTOs = new ArrayList<>();
+        for (Survey survey : surveyList) {
+            surveyDTOs.add(convertSurvey(survey));
+        }
+        return surveyDTOs;
+    }
+
+    // Get List can Participate
+    public List<SurveyDTO> getActiveSurveys(){
+        LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(0, 8, Sort.by("endDate").ascending());
+        List<Survey> surveyList = surveyRepository.findByEndDateAfter(now, pageable);
         List<SurveyDTO> surveyDTOs = new ArrayList<>();
         for (Survey survey : surveyList) {
             surveyDTOs.add(convertSurvey(survey));
