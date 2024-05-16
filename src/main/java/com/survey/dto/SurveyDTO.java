@@ -28,5 +28,5 @@ public class SurveyDTO {
     private LocalDateTime startDate; // 설문 시작일
     private LocalDateTime endDate; // 설문 마감일
 
-    private Integer SurveyParticipate; // 설문조사 참여 인원
+    private Integer surveyParticipate; // 설문조사 참여 인원
 }

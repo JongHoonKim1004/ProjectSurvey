@@ -28,7 +28,7 @@ public class UsersSurvey {
     @JoinColumn(name = "UsersId")
     private Users usersId; // 이용자 식별자
 
-
+    private String memberId; // 사업자 페이지용 사업자 식별자
     private LocalDateTime surveyDate; // 설문조사 응시일
     private Integer pointGiven; // 수령한 포인트
 }

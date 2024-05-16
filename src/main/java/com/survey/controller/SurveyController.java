@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/survey/*")
@@ -37,6 +39,11 @@ public class SurveyController {
     private MemberPointLogService memberPointLogService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private UsersSurveyService usersSurveyService;
+    @Autowired
+    private MemberSurveyService memberSurveyService;
+
 
     // 설문조사 파트
         // Create Survey -> Get SurveyId
@@ -62,6 +69,13 @@ public class SurveyController {
         return ResponseEntity.ok(surveyDTOList);
     }
 
+            // Get List for Member
+    @GetMapping("/list/member/{memberId}")
+    public ResponseEntity<List<SurveyDTO>> listSurveysByMemberId(@PathVariable("memberId") String memberId) {
+        List<SurveyDTO> surveyDTOList = surveyService.findByMemberId(memberId);
+        return ResponseEntity.ok(surveyDTOList);
+    }
+
             // Get One By SurveyId
     @GetMapping("/read/{surveyId}")
     public ResponseEntity<SurveyDTO> readSurvey(@PathVariable String surveyId) {
@@ -76,6 +90,8 @@ public class SurveyController {
         log.info("Active surveys: {}", surveyDTOList);
         return ResponseEntity.ok(surveyDTOList);
     }
+
+
         // Update
     @PostMapping("/update/{surveyId}")
     public ResponseEntity<String> updateSurvey(@PathVariable String surveyId, @RequestBody SurveyDTO surveyDTO) {
@@ -162,6 +178,15 @@ public class SurveyController {
         return ResponseEntity.ok(nextQuestionDTO);
     }
 
+            // NextQuestionDTO List 호출
+    @GetMapping("/question/call/all/{surveyId}")
+    public ResponseEntity<List<NextQuestionDTO>> callAllQuestionInSurvey(@PathVariable String surveyId){
+        List<NextQuestionDTO> nextQuestionDTOList = optionsService.getNextQuestionList(surveyId);
+        log.info("Get All Lists : {}", nextQuestionDTOList);
+
+        return ResponseEntity.ok(nextQuestionDTOList);
+    }
+
         // Update
             // 질문 변경
     @PostMapping("/question/update/question/{questionId}")
@@ -219,125 +244,14 @@ public class SurveyController {
 
     // 응답 파트
         // Create
-    @PostMapping("/response/create")
+    @PostMapping("/response/create/{surveyId}")
     @Transactional
-    public ResponseEntity<?> createResponse(@RequestParam("surveyId") String surveyId, @RequestBody ResponseDTO responseDTO){
-        // 기본 설정
-            // 1. 설문 조사 및 응답에서 조사 DTO, 이름 추출
-        SurveyDTO surveyDTO = surveyService.findBySurveyId(surveyId);
-        String userId = responseDTO.getUsersId();
-        String memberId = surveyDTO.getMemberId();
-        OptionsDTO optionsDTO = optionsService.findByOptionsId(responseDTO.getOptionsId());
-        Boolean terminate = optionsDTO.isTerminate();
-
-            // 2. 이용자 관련 DTO 설정
-        UsersPointDTO usersPointDTO = usersPointService.findByUsersId(userId);
-        UsersPointLogDTO usersPointLogDTO = new UsersPointLogDTO();
-        usersPointLogDTO.setUsersId(userId);
-
-            // 3. 사업자 관련 DTO 설정
-        MemberPointDTO memberPointDTO = memberPointService.findByMemberId(memberId);
-        MemberPointLogDTO memberPointLogDTO = new MemberPointLogDTO();
-        memberPointLogDTO.setMemberId(memberId);
-
-        if(terminate){
-            // 조기종료 확인 시 최소 포인트 지급
-            Integer point = surveyDTO.getPointAtLeast();
-
-            // 1. 이용자 최소 포인트 지급
-            UsersPointDTO givedUsersPointDTO = usersPointService.givePoint(usersPointDTO, point);
-
-            // 2. 이용자 최소 포인트 지급 이력 작성
-            UsersPointLogDTO givedUsersPointLogDTO = usersPointLogService.savePlusLog(userId, point, "설문조사 응답 : 조사 조건 미달");
-
-            // 3. 사업자 최소 포인트 사용 후 잔액 계산
-            Integer memberPointBalance = memberPointDTO.getPointBalance() - point;
-
-            // 3-1. 사업자 잔여 포인트 일정 금액 이하일 시, 경고 이메일 전송 (이메일 API 설계 후)
-            String memberName = memberService.findByMemberId(memberId).getName();
-
-            if(memberPointBalance < 10000){
-                Integer code = emailService.createRandom();
-                String content = emailService.createEmailWithCode("memberPoint", code);
-                try{
-                    emailService.sendEmail(memberName, content, "memberPoint");
-                    log.info("Email Send : for member's point");
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-
-            // 4. 사업자 최소 포인트 사용
-            MemberPointDTO usedMemberPointDTO = memberPointService.usePoint(memberPointDTO, point);
-
-            // 5. 사업자 최소 포인트 사용 이력 작성
-            MemberPointLogDTO usedMemberPointLogDTO = memberPointLogService.saveMinusLog(memberId, point, "설문조사 참여 : " + surveyId);
-
-            // 6. 설문조사 종료시 응시 인원 1 만큼 추가
-            surveyService.plusSurveyParticipate(surveyDTO);
-
-            return ResponseEntity.ok("terminated");
-
-        } else {
-            // 조기종료가 아닌 경우 다음 질문를 호출
-            QuestionDTO questionDTO = questionService.findByQuestionId(responseDTO.getQuestionId());
-            String questionId = responseDTO.getQuestionId();
-            Integer questionNumber = questionDTO.getQuestionNumber();
-            Integer nextQuestionNumber = questionNumber + 1;
-
-            QuestionDTO nextQuestion = questionService.findByQuestionIdAndQuestionNumber(questionId, nextQuestionNumber);
-
-            // 다음 문제가 있는 경우 NextQuestionDTO 를 설정하고 전송
-            if(nextQuestion != null){
-                // 2. NextQuestionDTO 설정
-                NextQuestionDTO nextQuestionDTO = new NextQuestionDTO();
-                nextQuestionDTO.setQuestion(nextQuestion);
-
-                List<OptionsDTO> optionsDTOList = optionsService.findByQuestionId(questionId);
-                nextQuestionDTO.setOptions(optionsDTOList);
-
-                // 3. NextQuestionDTO 전송
-
-                return ResponseEntity.ok(nextQuestionDTO);
-            } else{
-                // 다음 문제가 없는 경우 설문이 종료되었으므로 최대 포인트 지급
-                Integer point = surveyDTO.getPoint();
-
-                // 1. 이용자 최대 포인트 지급
-                UsersPointDTO givedUsersPointDTO = usersPointService.givePoint(usersPointDTO, point);
-
-                // 2. 이용자 최대 포인트 지급 이력 작성
-                UsersPointLogDTO givedUsersPointLogDTO = usersPointLogService.savePlusLog(userId, point, "설문조사 응답");
-
-                // 3. 사업자 최대 포인트 사용 후 잔액 계산
-                Integer memberPointBalance = usersPointDTO.getPointBalance() - point;
-
-                // 3-1. 사업자 잔여 포인트 일정 금액 이하일 시, 경고 이메일 전송 (이메일 API 설계 후)
-                String memberName = memberService.findByMemberId(memberId).getName();
-
-                if(memberPointBalance < 10000){
-                    Integer code = emailService.createRandom();
-                    String content = emailService.createEmailWithCode("memberPoint", code);
-                    try{
-                        emailService.sendEmail(memberName, content, "memberPoint");
-                        log.info("Email Send : for member's point");
-                    } catch(Exception e){
-                        e.printStackTrace();
-                    }
-                }
-
-                // 4. 사업자 최대 포인트 사용
-                MemberPointDTO usedMemberPointDTO = memberPointService.usePoint(memberPointDTO, point);
-
-                // 5. 사업자 최대 포인트 사용 이력 작성
-                MemberPointLogDTO usedMemberPointLogDTO = memberPointLogService.saveMinusLog(memberId, point, "설문조사 참여 : " + surveyId);
-
-                // 6. 설문조사 종료시 응시 인원 1 만큼 추가
-                surveyService.plusSurveyParticipate(surveyDTO);
-
-                return ResponseEntity.ok("finished");
-            }
-        }
+    public ResponseEntity<Map<String, Object>> submitResponses(@PathVariable String surveyId, @RequestBody List<ResponseDTO> responseDTOs) {
+        log.info("Response : {} ", responseDTOs.toString());
+        boolean isTerminated = responseService.saveResponses(responseDTOs);
+        Map<String, Object> result = new HashMap<>();
+        result.put("isTerminated", isTerminated);
+        return ResponseEntity.ok(result);
     }
 
         // Read
@@ -353,13 +267,7 @@ public class SurveyController {
         return ResponseEntity.ok(responseDTOList);
     }
         // Update
-    @PostMapping("/response/update/{responseId}")
-    public ResponseEntity<String> updateResponse(@PathVariable String responseId, @RequestBody ResponseDTO responseDTO){
-        responseDTO.setResponseId(responseId);
-        responseService.save(responseDTO);
-        log.info("Response Updated Id: {}", responseDTO.getResponseId());
-        return ResponseEntity.ok("Response Updated");
-    }
+
 
         // 응답은 개별적으로 지울 수 없음 (설문조사가 삭제되면서 목록을 없애는 것만 가능)
 }

@@ -1,7 +1,9 @@
 package com.survey.controller;
 
+import com.survey.dto.ReplyDTO;
 import com.survey.dto.VOC_DTO;
 import com.survey.dto.VocReplyDTO;
+import com.survey.service.ReplyService;
 import com.survey.service.UsersService;
 import com.survey.service.VocService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/voc")
+@RequestMapping("/voc/*")
 @Slf4j
 public class VocController {
     @Autowired
     private VocService vocService;
+    @Autowired
+    private ReplyService replyService;
 
     // Create
     @PostMapping("/create")
@@ -46,6 +50,7 @@ public class VocController {
     @GetMapping("/one/{vocId}")
     public ResponseEntity<VocReplyDTO> getOne(@PathVariable String vocId){
         VocReplyDTO vocReplyDTO = vocService.getVocAndReplyList(vocId);
+        log.info("VOC sending : {}", vocReplyDTO.toString());
         return ResponseEntity.ok(vocReplyDTO);
     }
 
@@ -60,7 +65,16 @@ public class VocController {
 
     // Delete
     @PostMapping("/delete/{vocId}")
-    public ResponseEntity<String> delete(@PathVariable String vocId){
+    public ResponseEntity<?> delete(@PathVariable String vocId){
+        // 1. 문의에 달린 답글 제거
+        List<ReplyDTO> replyDTOList = replyService.findByVocId(vocId);
+        for(ReplyDTO replyDTO : replyDTOList){
+            replyService.delete(replyDTO.getId());
+            log.info("Reply Deleted");
+        }
+        log.info("Reply All Deleted");
+
+        // 2. 문의 제거
         vocService.delete(vocId);
         log.info("VOC Deleted: {}", vocId);
         return ResponseEntity.ok("VOC Deleted");

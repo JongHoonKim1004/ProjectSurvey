@@ -35,6 +35,12 @@ public class ReplyController {
         ReplyDTO replyDTO1 =  replyService.save(replyDTO);
         log.info("Reply created: {}", replyDTO1.toString());
 
+        // 답글이 작성되면 문의에 답글 항목 변경
+        VOC_DTO vocDTO = vocService.findByVocId(replyDTO1.getVocId());
+        vocDTO.setReply(true);
+        vocService.update(vocDTO);
+        log.info("VOC updated: {}", vocDTO);
+
         // 답글이 작성되면 이메일 전송
             // 1. 작성자 확인
         VOC_DTO vocDto = vocService.findByVocId(replyDTO1.getVocId());
@@ -55,7 +61,13 @@ public class ReplyController {
         return ResponseEntity.ok("Reply created");
     }
 
-    // Read List 부분은 VocController 에서 List 를 받아오는 방법 채택
+    // Read
+    @GetMapping("/list/{vocId}")
+    public ResponseEntity<List<ReplyDTO>> getList(@PathVariable String vocId) {
+        List<ReplyDTO> replyDTOList = replyService.findByVocId(vocId);
+        return ResponseEntity.ok(replyDTOList);
+    }
+
 
 
     // Update

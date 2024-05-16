@@ -87,7 +87,7 @@ public class SurveyService {
     // Get ListByMember
     public List<SurveyDTO> findByMemberId(String MemberId){
         Member member = memberRepository.findByMemberId(MemberId);
-        List<Survey> surveyList = surveyRepository.findByMemberId(memberRepository.findByMemberId(MemberId));
+        List<Survey> surveyList = surveyRepository.findByMemberId(MemberId);
         List<SurveyDTO> surveyDTOs = new ArrayList<>();
         for (Survey survey : surveyList) {
             surveyDTOs.add(convertSurvey(survey));

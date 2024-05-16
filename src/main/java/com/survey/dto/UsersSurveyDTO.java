@@ -19,6 +19,8 @@ public class UsersSurveyDTO {
 
     private String usersId; // 이용자 식별자
 
+    private String memberId; // 사업자 페이지용 사업자 식별자
+
     private LocalDateTime surveyDate; // 설문조사 응시일
     private Integer PointGiven; // 수령한 포인트
 }

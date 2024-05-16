@@ -7,6 +7,7 @@ import com.survey.entity.Options;
 import com.survey.entity.Question;
 import com.survey.repository.OptionsRepository;
 import com.survey.repository.QuestionRepository;
+import com.survey.repository.SurveyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class OptionsService {
     private QuestionRepository questionRepository;
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private SurveyRepository surveyRepository;
 
     // Convert DTO to Entity
     public Options convertDTO(OptionsDTO optionsDTO) {
@@ -102,6 +105,27 @@ public class OptionsService {
         }
         nextQuestionDTO.setOptions(optionsDTOList);
         return nextQuestionDTO;
+    }
+
+    // Get NextQuestionDTO LIST
+    public List<NextQuestionDTO> getNextQuestionList(String surveyId){
+        List<NextQuestionDTO> nextQuestionDTOList = new ArrayList<>();
+        List<QuestionDTO> questionDTOList = questionService.findBySurveyId(surveyId);
+
+        for(QuestionDTO questionDTO : questionDTOList){
+            NextQuestionDTO nextQuestionDTO = new NextQuestionDTO();
+            List<Options> optionsList = optionsRepository.findByQuestionIdOrderByOptionsNumberAsc(questionRepository.findByQuestionId(questionDTO.getQuestionId()));
+            List<OptionsDTO> optionsDTOList = new ArrayList<>();
+            for(Options options : optionsList){
+                optionsDTOList.add(convertEntity(options));
+            }
+
+            nextQuestionDTO.setOptions(optionsDTOList);
+            nextQuestionDTO.setQuestion(questionDTO);
+            nextQuestionDTOList.add(nextQuestionDTO);
+        }
+
+        return nextQuestionDTOList;
     }
 
     // Get OneByOptionsId

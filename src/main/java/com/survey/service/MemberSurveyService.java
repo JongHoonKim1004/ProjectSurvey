@@ -32,16 +32,14 @@ public class MemberSurveyService {
         }
         memberSurvey.setSurveyId(surveyRepository.findBySurveyId(memberSurveyDTO.getSurveyId()));
         memberSurvey.setMemberId(memberRepository.findByMemberId(memberSurveyDTO.getMemberId()));
-        memberSurvey.setStartDate(memberSurveyDTO.getStartDate());
-        // 등록일이 없는 신규 등록일 경우 변환 시간을 등록 시간으로 설정
-        if(memberSurveyDTO.getRegDate() != null){
-            memberSurvey.setRegDate(memberSurveyDTO.getRegDate());
+        memberSurvey.setUsersId(memberSurveyDTO.getUsersId());
+        memberSurvey.setPointGiven(memberSurveyDTO.getPointGiven());
+        if(memberSurveyDTO.getSurveyTime() != null){
+            memberSurvey.setSurveyTime(memberSurveyDTO.getSurveyTime());
         } else {
-            memberSurvey.setRegDate(LocalDateTime.now());
+            memberSurvey.setSurveyTime(LocalDateTime.now());
         }
-        memberSurvey.setEndDate(memberSurveyDTO.getEndDate());
-        memberSurvey.setPointGive(memberSurveyDTO.getPointGive());
-        memberSurvey.setPointAtLeastGive(memberSurveyDTO.getPointAtLeastGive());
+
         return memberSurvey;
     }
 
@@ -51,21 +49,21 @@ public class MemberSurveyService {
         memberSurveyDTO.setLogId(memberSurvey.getLogId());
         memberSurveyDTO.setSurveyId(memberSurvey.getSurveyId().getSurveyId());
         memberSurveyDTO.setMemberId(memberSurvey.getMemberId().getMemberId());
-        memberSurveyDTO.setStartDate(memberSurvey.getStartDate());
-        memberSurveyDTO.setRegDate(memberSurvey.getRegDate());
-        memberSurveyDTO.setEndDate(memberSurvey.getEndDate());
-        memberSurveyDTO.setPointGive(memberSurvey.getPointGive());
-        memberSurveyDTO.setPointAtLeastGive(memberSurvey.getPointAtLeastGive());
+        memberSurveyDTO.setUsersId(memberSurvey.getUsersId());
+        memberSurveyDTO.setPointGiven(memberSurvey.getPointGiven());
+        memberSurveyDTO.setSurveyTime(memberSurvey.getSurveyTime());
 
         return memberSurveyDTO;
     }
 
     // Create
     @Transactional
-    public void save(MemberSurveyDTO memberSurveyDTO) {
+    public MemberSurveyDTO save(MemberSurveyDTO memberSurveyDTO) {
         MemberSurvey memberSurvey = convertDTO(memberSurveyDTO);
         MemberSurvey saved = memberSurveyRepository.save(memberSurvey);
         log.info("SAVED COMPLETE, ID : {}",saved);
+
+        return convertEntity(saved);
     }
 
     // Read
@@ -73,6 +71,17 @@ public class MemberSurveyService {
     public List<MemberSurveyDTO> findByMemberID(String memberID) {
         List<MemberSurveyDTO> memberSurveyDTOList = new ArrayList<>();
         List<MemberSurvey> memberSurveyList = memberSurveyRepository.findByMemberId(memberRepository.findByMemberId(memberID));
+        for(MemberSurvey memberSurvey : memberSurveyList){
+            MemberSurveyDTO memberSurveyDTO = convertEntity(memberSurvey);
+            memberSurveyDTOList.add(memberSurveyDTO);
+        }
+        return memberSurveyDTOList;
+    }
+
+    // For Member one survey
+    public List<MemberSurveyDTO> findBySurveyId(String surveyId){
+        List<MemberSurveyDTO> memberSurveyDTOList = new ArrayList<>();
+        List<MemberSurvey> memberSurveyList = memberSurveyRepository.findBySurveyId(surveyRepository.findBySurveyId(surveyId));
         for(MemberSurvey memberSurvey : memberSurveyList){
             MemberSurveyDTO memberSurveyDTO = convertEntity(memberSurvey);
             memberSurveyDTOList.add(memberSurveyDTO);
@@ -90,6 +99,8 @@ public class MemberSurveyService {
         }
         return memberSurveyDTOs;
     }
+
+
     // Update
     @Transactional
     public void update(MemberSurveyDTO memberSurveyDTO) {

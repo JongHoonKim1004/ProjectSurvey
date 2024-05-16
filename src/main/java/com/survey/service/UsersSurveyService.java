@@ -36,7 +36,12 @@ public class UsersSurveyService {
         }
         usersSurvey.setSurveyId(survey);
         usersSurvey.setUsersId(users);
-        usersSurvey.setSurveyDate(LocalDateTime.now());
+        usersSurvey.setMemberId(usersSurveyDTO.getMemberId());
+        if(usersSurveyDTO.getSurveyDate() != null) {
+            usersSurvey.setSurveyDate(usersSurveyDTO.getSurveyDate());
+        } else {
+            usersSurvey.setSurveyDate(LocalDateTime.now());
+        }
         usersSurvey.setPointGiven(usersSurveyDTO.getPointGiven());
         return usersSurvey;
     }
@@ -47,6 +52,7 @@ public class UsersSurveyService {
         usersSurveyDTO.setLogId(usersSurvey.getLogId());
         usersSurveyDTO.setSurveyId(usersSurvey.getSurveyId().getSurveyId());
         usersSurveyDTO.setUsersId(usersSurvey.getUsersId().getUsersId());
+        usersSurveyDTO.setMemberId(usersSurvey.getMemberId());
         usersSurveyDTO.setPointGiven(usersSurvey.getPointGiven());
         usersSurveyDTO.setSurveyDate(usersSurvey.getSurveyDate());
         return usersSurveyDTO;
@@ -54,10 +60,12 @@ public class UsersSurveyService {
 
     // Create
     @Transactional
-    public void save(UsersSurveyDTO usersSurveyDTO) {
+    public UsersSurveyDTO save(UsersSurveyDTO usersSurveyDTO) {
         UsersSurvey usersSurvey = convertDTO(usersSurveyDTO);
         UsersSurvey saved = usersSurveyRepository.save(usersSurvey);
         log.info("SAVE COMPLETE, LogId : {}", saved.getLogId());
+
+        return convertDTO(saved);
     }
 
 
@@ -81,6 +89,19 @@ public class UsersSurveyService {
         for(UsersSurvey usersSurvey : usersSurveyList){
             UsersSurveyDTO usersSurveyDTO = convertDTO(usersSurvey);
             usersSurveyDTOList.add(usersSurveyDTO);
+        }
+
+        return usersSurveyDTOList;
+    }
+
+    // For Member
+    public List<UsersSurveyDTO> findByMemberId(String memberId){
+        List<UsersSurvey> usersSurveyList = usersSurveyRepository.findByMemberIdOrderBySurveyDateDesc(memberId);
+        List<UsersSurveyDTO> usersSurveyDTOList = new ArrayList<>();
+
+        for(UsersSurvey survey : usersSurveyList){
+            UsersSurveyDTO dto = convertDTO(survey);
+            usersSurveyDTOList.add(dto);
         }
 
         return usersSurveyDTOList;

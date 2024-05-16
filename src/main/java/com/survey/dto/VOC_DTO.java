@@ -22,7 +22,7 @@ public class VOC_DTO {
     private String writer; // 작성자(이용자)
 
     private LocalDateTime regDate; // 작성일
-    private Boolean reply; // 답변 여부
+    private Boolean reply = false; // 답변 여부
 
     private Survey SurveyId; // 설문조사 식별자(선택)
 

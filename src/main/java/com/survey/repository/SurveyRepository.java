@@ -13,7 +13,7 @@ import java.util.List;
 public interface SurveyRepository extends JpaRepository<Survey, String> {
     public Survey findBySurveyId(String surveyId);
 
-    public List<Survey> findByMemberId(Member memberId);
+    public List<Survey> findByMemberId(String memberId);
 
     public List<Survey> findByEndDateAfter(LocalDateTime now, Pageable pageable);
 }

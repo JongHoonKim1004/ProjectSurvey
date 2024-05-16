@@ -30,6 +30,8 @@ public class MemberController {
     private TokenProvider tokenProvider;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private MemberSurveyService memberSurveyService;
 
     // 개인 정보 관련 메서드
         // Create (계정을 생성 할때 포인트 테이블도 같이 생성)
@@ -205,5 +207,23 @@ public class MemberController {
             ErrorDTO errorDTO = new ErrorDTO().builder().error("Invalid username or password").build();
             return ResponseEntity.badRequest().body(errorDTO);
         }
+    }
+
+    // 설문조사 참여 관련 메서드
+    // Create 는 설문조사 중 발생
+
+    // Read
+    @GetMapping("/survey/memberid/{memberId}")
+    public ResponseEntity<List<MemberSurveyDTO>> memberSurveyLogList(@PathVariable String memberId){
+        List<MemberSurveyDTO> memberSurveyDTOList = memberSurveyService.findByMemberID(memberId);
+
+        return ResponseEntity.ok(memberSurveyDTOList);
+    }
+
+    @GetMapping("/survey/surveyid/{surveyId}")
+    public ResponseEntity<List<MemberSurveyDTO>> memberSurveylogList2(@PathVariable String surveyId){
+        List<MemberSurveyDTO> memberSurveyDTOList = memberSurveyService.findBySurveyId(surveyId);
+
+        return ResponseEntity.ok(memberSurveyDTOList);
     }
 }

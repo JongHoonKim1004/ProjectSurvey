@@ -56,6 +56,7 @@ public class VocService {
 
     // Convert Entity to DTO
     public VOC_DTO convertEntity(VOC voc){
+        log.info(voc.toString());
         VOC_DTO dto = new VOC_DTO();
         dto.setVocId(voc.getVocId());
         dto.setTitle(voc.getTitle());
@@ -64,9 +65,7 @@ public class VocService {
         dto.setReply(voc.getReply());
         dto.setRegDate(voc.getRegDate());
         dto.setSurveyId(voc.getSurveyId());
-        if(replyRepository.findByVocId(vocRepository.findByVocId(dto.getVocId())) != null){
-            dto.setReply(true);
-        } else dto.setReply(false);
+
 
         return dto;
     }
