@@ -12,4 +12,6 @@ public interface UsersSurveyRepository extends JpaRepository<UsersSurvey, String
     public UsersSurvey findByLogId(String logId);
 
     List<UsersSurvey> findByMemberIdOrderBySurveyDateDesc(String memberId);
+
+    List<UsersSurvey> findAllByOrderBySurveyDateDesc();
 }

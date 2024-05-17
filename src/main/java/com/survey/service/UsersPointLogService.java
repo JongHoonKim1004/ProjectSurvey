@@ -57,10 +57,12 @@ public class UsersPointLogService {
     // Create
         // Normal
     @Transactional
-    public void save(UsersPointLogDTO usersPointLogDTO) {
+    public UsersPointLogDTO save(UsersPointLogDTO usersPointLogDTO) {
         UsersPointLog usersPointLog = convertDTO(usersPointLogDTO);
-        usersPointLogRepository.save(usersPointLog);
+        UsersPointLog usersPointLog1 = usersPointLogRepository.save(usersPointLog);
         log.info("User {}s point log saved", usersPointLogDTO.getUsersId());
+
+        return convertUser(usersPointLog1);
     }
 
         // Create Plus log

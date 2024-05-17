@@ -22,8 +22,8 @@ public class MemberSurvey {
     @GeneratedValue(generator = "system-uuid")
     private String logId; // 생성 로그 식별자
 
-    @OneToOne
-    @JoinColumn(name = "SurveyId")
+    @ManyToOne
+    @JoinColumn(name = "SurveyId", unique = false)
     private Survey surveyId; // 설문조사 식별자
 
     @ManyToOne

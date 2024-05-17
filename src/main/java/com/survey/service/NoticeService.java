@@ -6,6 +6,7 @@ import com.survey.repository.AdminRepository;
 import com.survey.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +59,33 @@ public class NoticeService {
         return noticeDTO;
     }
 
+    // Paging
+    public Page<NoticeDTO> noticePage(int page){
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        Page<Notice> noticePage = noticeRepository.findAll(pageable);
+        List<NoticeDTO> noticeDTOList = new ArrayList<>();
+        for(Notice notice : noticePage.getContent()){
+            NoticeDTO noticeDTO = convertEntity(notice);
+            noticeDTOList.add(noticeDTO);
+        }
+
+        return new PageImpl<>(noticeDTOList, pageable, noticePage.getTotalElements());
+    }
+
+    // Paging
+    public Page<NoticeDTO> noticePageforMainPage(){
+        Pageable pageable = PageRequest.of(0, 3, Sort.by("id").descending());
+        Page<Notice> noticePage = noticeRepository.findAll(pageable);
+        List<NoticeDTO> noticeDTOList = new ArrayList<>();
+        for(Notice notice : noticePage.getContent()){
+            NoticeDTO noticeDTO = convertEntity(notice);
+            noticeDTOList.add(noticeDTO);
+        }
+
+        return new PageImpl<>(noticeDTOList, pageable, noticePage.getTotalElements());
+    }
+
+
     // Create
     @Transactional
     public NoticeDTO save(NoticeDTO noticeDTO) {
@@ -71,7 +99,7 @@ public class NoticeService {
     // Read
     // GET List
     public List<NoticeDTO> findAll() {
-        List<Notice> notices = noticeRepository.findAll();
+        List<Notice> notices = noticeRepository.findAllByOrderByIdDesc();
         List<NoticeDTO> noticeDTOList = new ArrayList<>();
         for (Notice notice : notices) {
             NoticeDTO noticeDTO = convertEntity(notice);

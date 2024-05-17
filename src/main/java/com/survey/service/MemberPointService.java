@@ -79,10 +79,12 @@ public class MemberPointService {
 
     // Update
     @Transactional
-    public void update(MemberPointDTO memberPointDTO) {
+    public MemberPointDTO update(MemberPointDTO memberPointDTO) {
         MemberPoint memberPoint = convertDTO(memberPointDTO);
         MemberPoint saved = memberPointRepository.save(memberPoint);
         log.info("UPDATED COMPLETE, ID : {}", saved.getMemberId().getMemberId());
+
+        return convertMemberPoint(saved);
     }
 
     // Delete

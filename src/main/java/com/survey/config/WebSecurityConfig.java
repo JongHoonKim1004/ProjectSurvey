@@ -50,6 +50,9 @@ public class WebSecurityConfig {
                 // csrf 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
 
+                // 소셜로그인 설정
+
+
         // filter 등록
         .addFilterAfter(
                 jwtAuthenticationFilter,

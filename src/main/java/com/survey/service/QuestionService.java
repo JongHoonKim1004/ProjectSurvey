@@ -73,7 +73,7 @@ public class QuestionService {
     public List<QuestionDTO> findBySurveyId(String surveyId) {
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         Survey survey = surveyRepository.findBySurveyId(surveyId);
-        List<Question> questionList = questionRepository.findBySurveyId(survey);
+        List<Question> questionList = questionRepository.findBySurveyIdOrderByQuestionNumberAsc(survey);
         for(Question question : questionList){
             QuestionDTO questionDTO = convertQuestion(question);
             questionDTOList.add(questionDTO);
@@ -85,7 +85,7 @@ public class QuestionService {
     public QuestionDTO findBySurveyIdAndQuestionNumber(String surveyId, Integer questionNumber) {
         QuestionDTO questionDTO = new QuestionDTO();
         Survey survey = surveyRepository.findBySurveyId(surveyId);
-        List<Question> questionList = questionRepository.findBySurveyId(survey);
+        List<Question> questionList = questionRepository.findBySurveyIdOrderByQuestionNumberAsc(survey);
         for(Question question : questionList){
             if(question.getQuestionNumber().equals(questionNumber)){
                 questionDTO = convertQuestion(question);

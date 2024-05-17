@@ -85,7 +85,7 @@ public class UsersSurveyService {
     // For Admin
     public List<UsersSurveyDTO> findAll() {
         List<UsersSurveyDTO> usersSurveyDTOList = new ArrayList<>();
-        List<UsersSurvey> usersSurveyList = usersSurveyRepository.findAll();
+        List<UsersSurvey> usersSurveyList = usersSurveyRepository.findAllByOrderBySurveyDateDesc();
         for(UsersSurvey usersSurvey : usersSurveyList){
             UsersSurveyDTO usersSurveyDTO = convertDTO(usersSurvey);
             usersSurveyDTOList.add(usersSurveyDTO);

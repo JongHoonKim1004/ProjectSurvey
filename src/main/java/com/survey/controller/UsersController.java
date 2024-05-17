@@ -1,9 +1,6 @@
 package com.survey.controller;
 
-import com.survey.dto.ErrorDTO;
-import com.survey.dto.UsersDTO;
-import com.survey.dto.UsersPointDTO;
-import com.survey.dto.UsersPointLogDTO;
+import com.survey.dto.*;
 import com.survey.entity.Users;
 import com.survey.security.TokenProvider;
 import com.survey.service.UsersPointLogService;
@@ -179,6 +176,24 @@ public class UsersController {
         log.info("User's log Deleted: {}", logId);
         return ResponseEntity.ok("Log Deleted");
     }
+
+    /*                             설문조사 이력                                         */
+    // Read
+    // For user
+    @GetMapping("/survey/{usersId}")
+    public ResponseEntity<List<UsersSurveyDTO>> getUsersSurvey(@PathVariable("usersId") String usersId) {
+        List<UsersSurveyDTO> surveyDTOList = usersSurveyService.findByUsersId(usersId);
+        log.info("Users Survey List: {}", surveyDTOList);
+        return ResponseEntity.ok(surveyDTOList);
+    }
+
+    // For Admin
+    @GetMapping("/survey/all")
+    public ResponseEntity<List<UsersSurveyDTO>> getUsersSurveyAll() {
+        List<UsersSurveyDTO> surveyDTOList = usersSurveyService.findAll();
+        return ResponseEntity.ok(surveyDTOList);
+    }
+
 
     /*                              로그인                                         */
     // 로그인 처리

@@ -27,11 +27,12 @@ public class MemberController {
     @Autowired
     private MemberPointLogService memberPointLogService;
     @Autowired
+    private MemberSurveyService memberSurveyService;
+    @Autowired
     private TokenProvider tokenProvider;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    @Autowired
-    private MemberSurveyService memberSurveyService;
+
 
     // 개인 정보 관련 메서드
         // Create (계정을 생성 할때 포인트 테이블도 같이 생성)
@@ -47,7 +48,7 @@ public class MemberController {
         // 포인트 테이블 생성
         MemberPointDTO memberPointDTO = new MemberPointDTO();
         memberPointDTO.setMemberId(memberDTO1.getMemberId());
-        memberPointDTO.setPointTotal(500);
+        memberPointDTO.setPointTotal(50000);
         memberPointDTO.setPointUsed(0);
         memberPointDTO.setPointBalance(memberPointDTO.getPointTotal() - memberPointDTO.getPointUsed());
         MemberPointDTO memberPointDTO1 = memberPointService.save(memberPointDTO);
@@ -56,7 +57,7 @@ public class MemberController {
         // 포인트 이력 첫 로그 생성
         MemberPointLogDTO memberPointLogDTO = new MemberPointLogDTO();
         memberPointLogDTO.setMemberId(memberDTO1.getMemberId());
-        memberPointLogDTO.setPointChange(500);
+        memberPointLogDTO.setPointChange(50000);
         memberPointLogDTO.setChangeType("신규 가입");
         MemberPointLogDTO memberPointLogDTO1 = memberPointLogService.save(memberPointLogDTO);
         log.info("Member Point Log Created: {}", memberPointLogDTO1);
@@ -106,7 +107,15 @@ public class MemberController {
         memberPointService.delete(memberPointDTO.getPointId());
         log.info("Member {}'s Point Deleted", memberId);
 
-        // 3. 회원 탈퇴
+        // 3. 사업자 설문조사 이력 제거
+        List<MemberSurveyDTO> memberSurveyDTOList = memberSurveyService.findByMemberID(memberId);
+        for(MemberSurveyDTO memberSurveyDTO : memberSurveyDTOList) {
+            memberSurveyService.delete(memberSurveyDTO.getLogId());
+            log.info("Member {}'s Survey Deleted", memberSurveyDTO.getMemberId());
+        }
+        log.info("Member {}'s Survey All Deleted", memberId);
+
+        // 4. 회원 탈퇴
         memberService.delete(memberId);
         log.info("Member Deleted : {}", memberId);
 

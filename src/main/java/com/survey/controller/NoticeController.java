@@ -5,6 +5,7 @@ import com.survey.entity.Notice;
 import com.survey.service.NoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,21 @@ public class NoticeController {
         log.info("Getting Notice List...");
         return ResponseEntity.ok(noticeService.findAll());
     }
+
+    // GetList with Paging
+    @GetMapping("/list/page/{page}")
+    public ResponseEntity<Page<NoticeDTO>> listPage(@PathVariable int page) {
+        log.info("Getting Notice List... with Paging, {}", page);
+        return ResponseEntity.ok(noticeService.noticePage(page));
+    }
+
+    // GetList with Paging for MainPage
+    @GetMapping("/list/formain")
+    public ResponseEntity<Page<NoticeDTO>> listForMain() {
+        log.info("Getting Notice List... for Main Page");
+        return ResponseEntity.ok(noticeService.noticePageforMainPage());
+    }
+
 
     // GetOne
     @GetMapping("/read/{id}")

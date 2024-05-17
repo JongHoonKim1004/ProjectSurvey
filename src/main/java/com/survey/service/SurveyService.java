@@ -43,7 +43,11 @@ public class SurveyService {
         }
         survey.setStartDate(surveyDTO.getStartDate());
         survey.setEndDate(surveyDTO.getEndDate());
-        survey.setSurveyParticipate(surveyDTO.getSurveyParticipate());
+        if(surveyDTO.getSurveyParticipate() != null){
+            survey.setSurveyParticipate(surveyDTO.getSurveyParticipate());
+        } else {
+            survey.setSurveyParticipate(0);
+        }
 
         return survey;
     }
